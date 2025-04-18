@@ -1,6 +1,7 @@
 package model;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Volo {
@@ -14,6 +15,9 @@ public class Volo {
     private String stato;
     private Integer numeroGate;
 
+    private static ArrayList<Volo> voli = new ArrayList<Volo>();
+    private ArrayList<Prenotazione> prenotazioni = new ArrayList<Prenotazione>();
+
     public Volo(int codice, String compagniaAerea, String aeroportoOrigine, String aeroportoDestinazione, Date data,
                 LocalTime orario, LocalTime ritardo, String stato, Integer numeroGate) {
         this.codice = codice;
@@ -25,12 +29,44 @@ public class Volo {
         this.ritardo = ritardo;
         this.stato = stato;
         this.numeroGate = numeroGate;
+        voli.add(this);
     }
 
-    public void printVoli(){
+    public static void printVoli(){
+        System.out.println("\nVoli: ");
+        for(Volo volo : voli){
+            System.out.println(volo.codice + " " + volo.compagniaAerea + " " + volo.aeroportoOrigine + " " + volo.aeroportoDestinazione + " " + volo.data + " "
+            + volo.orario + " " + volo.ritardo + " " + volo.stato + " " + volo.numeroGate);
 
+        }
     }
 
-    // getVoli
+    public static ArrayList<Volo> getVoli(){
+        return voli;
+    }
+
+    public String getAeroportoOrigine() {
+        return aeroportoOrigine;
+    }
+
+    public ArrayList<Prenotazione> getPrenotazioni() {
+        return prenotazioni;
+    }
+
+    public int getCodice() {
+        return codice;
+    }
+
+    public void addPrenotazione(Prenotazione prenotazione) {
+        prenotazioni.add(prenotazione);
+    }
+
+    public void setCodice(int codice) {
+        this.codice = codice;
+    }
+
+    public void setNumeroGate(int numeroGate) {
+        this.numeroGate = numeroGate;
+    }
 
 }

@@ -17,6 +17,6 @@ public class Utente {
     }
 
     public void visualizzaVoli(){
-
+        Volo.printVoli();
     }
 }
