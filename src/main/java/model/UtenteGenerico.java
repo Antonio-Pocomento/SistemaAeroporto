@@ -13,57 +13,49 @@ public class UtenteGenerico extends Utente {
         return prenotazioniUtente;
     }
 
+    public Prenotazione getPrenotazioneUtente(int numeroBiglietto) {
+        for (Prenotazione p : prenotazioniUtente) {
+            if(p.getNumeroBiglietto() == numeroBiglietto) return p;
+        };
+        System.out.println("\nErrore: Prenotazione non trovata\n");
+        return null;
+    }
+
     public void prenotaVolo(Volo volo) {
         if(!volo.getAeroportoOrigine().equals("Napoli")) {
             System.out.println("Non è possibile prenotare voli in arrivo");
             return;
         }
-        // Bagagli
-
-        Passeggero passeggero = Prenotazione.checkIn();
-        Bagaglio b = new Bagaglio(1,StatoBagaglio.caricato, passeggero);
-        passeggero.addBagaglio(b);
-        Prenotazione prenotazione = new Prenotazione(1,100,StatoPrenotazione.inAttesa,passeggero,volo,this);
+        // VALORI TEST
+        Prenotazione prenotazione = new Prenotazione(volo,this);
         prenotazioniUtente.add(prenotazione);
         volo.addPrenotazione(prenotazione);
-        passeggero.setPrenotazione(prenotazione);
+        System.out.println("\nPrenotazione aggiunta");
     }
 
     public void cercaPrenotazioni(int codiceVolo) {
+        System.out.println("\nPrenotazioni per il volo "+codiceVolo+":");
         for(Prenotazione prenotazione : prenotazioniUtente) {
             if(prenotazione.getVolo().getCodice() == codiceVolo) {
-                //print
+                prenotazione.printPrenotazione();
             }
         }
     }
 
     public void cercaPrenotazioni(String nomePasseggero) {
+        System.out.println("\nPrenotazioni per il passeggero "+nomePasseggero+":");
         for(Prenotazione prenotazione : prenotazioniUtente) {
-            if(prenotazione.getPasseggero().getNome() == nomePasseggero) {
-                //print
+            if(prenotazione.getPasseggero().getNome().equals(nomePasseggero)) {
+                prenotazione.printPrenotazione();
             }
         }
     }
 
-    public void printPrenotazioni() {
-        for(Prenotazione prenotazione : prenotazioniUtente) {
-            prenotazione.printPrenotazione();
-        }
+    public void segnalaSmarrimento(Bagaglio bagaglio){
+        bagaglio.setStato(StatoBagaglio.smarrito);
     }
 
-    // Da modificare
-    public void segnalaSmarrimento(){
-        for(Prenotazione prenotazione : prenotazioniUtente) {
-            if(prenotazione.getStatoPrenotazione() == StatoPrenotazione.confermata || prenotazione.getStatoPrenotazione() == StatoPrenotazione.inAttesa) {
-                ArrayList<Bagaglio> bagagli = prenotazione.getPasseggero().getBagagli();
-                for(Bagaglio bagaglio : bagagli) {
-                    bagaglio.setStato(StatoBagaglio.smarrito);
-                }
-            }
-        }
-    }
-
-    public void modificaPrenotazione(Prenotazione prenotazione) {
-        prenotazione.setStato(StatoPrenotazione.confermata);
+    public void modificaPrenotazione(Prenotazione prenotazione, StatoPrenotazione statoPrenotazione) {
+        prenotazione.setStato(statoPrenotazione);
     }
 }

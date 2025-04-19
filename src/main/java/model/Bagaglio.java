@@ -5,9 +5,9 @@ public class Bagaglio {
     private StatoBagaglio stato;
     private Passeggero passeggero;
 
-    public Bagaglio(int codice, StatoBagaglio stato, Passeggero passeggero) {
+    public Bagaglio(int codice, Passeggero passeggero) {
         this.codice = codice;
-        this.stato = stato;
+        this.stato = StatoBagaglio.ritirabile;
         this.passeggero = passeggero;
     }
 
@@ -15,11 +15,14 @@ public class Bagaglio {
         return stato;
     }
 
+    public int getCodice(){return codice;}
+
     public void setStato(StatoBagaglio stato) {
         this.stato = stato;
     }
 
     public void printBagaglio(){
+        System.out.println("Bagaglio: ");
         System.out.println(codice+" "+stato);
     }
 }

@@ -1,5 +1,6 @@
 package model;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
@@ -11,20 +12,46 @@ public class Amministratore extends Utente {
         super(nomeUtente, email, passwordUtente);
     }
 
-    public void inserisciVolo(int codice, String compagniaAerea, String aeroportoOrigine, String aeroportoDestinazione, Date data,
-                              LocalTime orario, LocalTime ritardo, String stato, Integer numeroGate){
-        new Volo(codice,compagniaAerea,aeroportoOrigine,aeroportoDestinazione,data,orario,ritardo,stato,numeroGate);
+    public ArrayList<Volo> getVoliGestiti() {
+        return voliGestiti;
     }
 
-    // TEST
-    public void modificaVolo(Volo volo){
-        volo.setCodice(3);
-        volo.setNumeroGate(13);
+    public Volo getVoloGestito(int codice)
+    {
+        for(Volo v : voliGestiti)
+        {
+            if(v.getCodice() == codice) return v;
+        }
+        System.out.println("Errore: Volo non trovato");
+        return null;
     }
 
-    // ???
+    public void inserisciVolo(Volo volo){
+        volo.addVolo();
+    }
+
+    public void modificaCodiceVolo(Volo volo, int codice){
+        volo.setCodice(codice);
+    }
+    public void modificaDataVolo(Volo volo, LocalDate data){
+        volo.setData(data);
+    }
+    public void modificaOrarioVolo(Volo volo, LocalTime orario){
+        volo.setOrario(orario);
+    }
+    public void modificaRitardoVolo(Volo volo, LocalTime ritardo){
+        volo.setRitardo(ritardo);
+    }
+    public void modificaStatoVolo(Volo volo,StatoVolo stato){
+        volo.setStato(stato);
+    }
+    public void modificaNumeroGateVolo(Volo volo, int numeroGate){
+        volo.setNumeroGate(numeroGate);
+    }
+
     public void visualizzaBagagliSmarriti()
     {
+        System.out.println("\nBagagli smarriti per i voli attualmente gestiti:");
         for(Volo volo : voliGestiti)
         {
             ArrayList<Prenotazione> prenotazioni = volo.getPrenotazioni();
@@ -42,20 +69,8 @@ public class Amministratore extends Utente {
         }
     }
 
-    // TEST
-    public void modificaStatoBagaglio(){
-        for(Volo volo : voliGestiti)
-        {
-            ArrayList<Prenotazione> prenotazioni = volo.getPrenotazioni();
-            for(Prenotazione prenotazione : prenotazioni)
-            {
-                ArrayList<Bagaglio> bagagliPasseggero = prenotazione.getPasseggero().getBagagli();
-                for(Bagaglio bagaglio : bagagliPasseggero)
-                {
-                    bagaglio.setStato(StatoBagaglio.caricato);
-                }
-            }
-        }
+    public void modificaStatoBagaglio(Bagaglio bagaglio, StatoBagaglio stato){
+        bagaglio.setStato(stato);
     }
 
     public void gestisciVolo(Volo volo){

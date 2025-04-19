@@ -1,8 +1,7 @@
-import model.Amministratore;
-import model.UtenteGenerico;
-import model.Volo;
+import model.*;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,25 +16,34 @@ public class Main {
         if(admin.loginUtente("admin", "admin"))
         {
             System.out.println("\nAccesso riuscito!");
-            admin.inserisciVolo(1,"AEROITALIA","Napoli","Milano",
-                    Date.from(Instant.now()), LocalTime.now(),LocalTime.of(0,0),"OK",1);
-            admin.inserisciVolo(2,"AEROITALIA","Palermo","Napoli",
-                    Date.from(Instant.now()), LocalTime.now(),LocalTime.of(1,0),"OK",null);
+            Volo volo1 = new Volo(1,"AEROITALIA","Napoli","Milano",
+                    LocalDate.now(), LocalTime.now(),1);
+            Volo volo2 = new Volo(2,"AEROITALIA","Napoli","Torino",
+                    LocalDate.now(), LocalTime.now(),3);
+            Volo volo3 = new Volo(3,"AEROITALIA","Palermo","Napoli",
+                    LocalDate.now(), LocalTime.now(),null);
             admin.visualizzaVoli();
-            ArrayList<Volo> voli = Volo.getVoli();
-            admin.modificaVolo(voli.get(0));
+            admin.inserisciVolo(volo1);
+            admin.inserisciVolo(volo2);
+            admin.inserisciVolo(volo3);
             admin.visualizzaVoli();
+            admin.modificaCodiceVolo(volo1,111);
+            admin.modificaRitardoVolo(volo2,LocalTime.of(1,0));
+            admin.modificaNumeroGateVolo(volo2,8);
+            admin.visualizzaVoli();
+            admin.gestisciVolo(volo1);
             UtenteGenerico utente = new UtenteGenerico("Ciro", "ciro@gmail.com", "ciro");
-            utente.prenotaVolo(voli.get(1));
-            utente.prenotaVolo(voli.get(0));
-            utente.printPrenotazioni();
-            utente.segnalaSmarrimento();
-            admin.gestisciVolo(voli.get(0));
+            utente.prenotaVolo(volo3);
+            utente.prenotaVolo(volo1);
+            utente.prenotaVolo(volo2);
+            utente.cercaPrenotazioni(111);
+            utente.cercaPrenotazioni("Ciro");
+            utente.segnalaSmarrimento(utente.getPrenotazioneUtente(1).getPasseggero().getBagaglio(1));
             admin.visualizzaBagagliSmarriti();
-            admin.modificaStatoBagaglio();
+            admin.modificaStatoBagaglio(admin.getVoloGestito(111).getPrenotazione(1).getPasseggero().getBagaglio(1),StatoBagaglio.caricato);
             admin.visualizzaBagagliSmarriti();
-            utente.modificaPrenotazione(utente.getPrenotazioniUtente().get(0));
-            utente.printPrenotazioni();
+            utente.modificaPrenotazione(utente.getPrenotazioneUtente(1), StatoPrenotazione.cancellata);
+            utente.cercaPrenotazioni("Ciro");
         }
     }
 }

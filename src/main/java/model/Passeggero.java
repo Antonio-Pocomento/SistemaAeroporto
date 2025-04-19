@@ -18,10 +18,6 @@ public class Passeggero {
         this.prenotazione = prenotazione;
     }
 
-    public void setPrenotazione(Prenotazione prenotazione) {
-        this.prenotazione = prenotazione;
-    }
-
     public void addBagaglio(Bagaglio b){
         Bagagli.add(b);
     }
@@ -29,5 +25,12 @@ public class Passeggero {
     public String getNome() {
         return nome;
     }
-    public ArrayList<Bagaglio> getBagagli() { return Bagagli;}
+    public ArrayList<Bagaglio> getBagagli() {return Bagagli;}
+
+    public Bagaglio getBagaglio(int codiceBagaglio){
+        for(Bagaglio b : Bagagli){
+            if(b.getCodice() == codiceBagaglio){return b;}
+        }
+        return null;
+    }
 }
