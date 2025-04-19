@@ -3,7 +3,6 @@ package model;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class Amministratore extends Utente {
     private ArrayList<Volo> voliGestiti = new ArrayList<Volo>();
@@ -28,6 +27,7 @@ public class Amministratore extends Utente {
 
     public void inserisciVolo(Volo volo){
         volo.addVolo();
+        System.out.println("Volo aggiunto");
     }
 
     public void modificaCodiceVolo(Volo volo, int codice){

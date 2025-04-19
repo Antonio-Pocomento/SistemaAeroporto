@@ -17,13 +17,18 @@ public class UtenteGenerico extends Utente {
         for (Prenotazione p : prenotazioniUtente) {
             if(p.getNumeroBiglietto() == numeroBiglietto) return p;
         };
-        System.out.println("\nErrore: Prenotazione non trovata\n");
+        System.out.println("\nErrore: Prenotazione dell'utente non trovata\n");
         return null;
     }
 
     public void prenotaVolo(Volo volo) {
         if(!volo.getAeroportoOrigine().equals("Napoli")) {
             System.out.println("Non è possibile prenotare voli in arrivo");
+            return;
+        }
+        if(volo.getPostiDisponibili()<=0)
+        {
+            System.out.println("Posti per questo volo esauriti");
             return;
         }
         // VALORI TEST

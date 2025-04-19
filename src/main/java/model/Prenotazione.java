@@ -1,12 +1,10 @@
 package model;
 
-import java.sql.Time;
-import java.util.Random;
 import java.util.Scanner;
 
 public class Prenotazione {
     private int numeroBiglietto = 1;
-    private int postoAssegnato = 1;
+    private int postoAssegnato;
     private StatoPrenotazione stato;
     private Passeggero passeggero;
     private Volo volo;
@@ -17,10 +15,9 @@ public class Prenotazione {
     public Prenotazione(Volo volo, UtenteGenerico utente) {
         this.numeroBiglietto = numeroBiglietto+prenotazioniEffettuate;
         prenotazioniEffettuate++;
-        this.postoAssegnato = postoAssegnato;
+        this.postoAssegnato = volo.getNPosti()-volo.getPostiDisponibili()+1;
         this.stato = StatoPrenotazione.inAttesa;
-        // VALORI TEST
-        checkIn("Ciro","","Rampone","TestCodice",this);
+        checkIn();
         this.volo = volo;
         this.utente = utente;
     }
@@ -38,19 +35,17 @@ public class Prenotazione {
         return stato;
     }
 
-    public void checkIn(String nome, String secondoNome, String cognome, String codiceFiscale, Prenotazione prenotazione) {
-        Scanner sc = new Scanner(System.in);
-        this.passeggero = new Passeggero(nome, secondoNome, cognome,codiceFiscale,prenotazione);
-        System.out.println("\nQuanti bagagli trasporta?\nNumero di bagagli: ");
-        int nBag = sc.nextInt();
-        for(int i = 1; i < nBag+1; i++){
-            Bagaglio b = new Bagaglio(i, prenotazione.getPasseggero());
+    public void checkIn() {
+        // Valori di prova, da sostituire con input e interfaccia
+        passeggero = new Passeggero("Ciro", "", "Rampone","TestCodice",this);
+        for(int i = 1; i < 3; i++){
+            Bagaglio b = new Bagaglio(i, passeggero);
             passeggero.addBagaglio(b);
         }
     }
 
     public void printPrenotazione() {
-        System.out.println("Prenotazione #" + numeroBiglietto);
+        System.out.println("[#Biglietto]: " + numeroBiglietto);
         System.out.println("Posto: " +postoAssegnato+" Stato: "+stato);
     }
 }
