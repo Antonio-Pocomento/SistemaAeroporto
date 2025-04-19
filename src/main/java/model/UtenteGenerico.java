@@ -31,7 +31,7 @@ public class UtenteGenerico extends Utente {
             System.out.println("Posti per questo volo esauriti");
             return;
         }
-        // VALORI TEST
+
         Prenotazione prenotazione = new Prenotazione(volo,this);
         prenotazioniUtente.add(prenotazione);
         volo.addPrenotazione(prenotazione);
