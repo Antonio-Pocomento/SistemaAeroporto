@@ -81,14 +81,26 @@ public class LoginGUI {
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                HomePage HomePageGUI= null;
-                try {
-                    HomePageGUI = new HomePage(frame, controller);
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
+                if(controller.isAdmin(loginField.getText())) {
+                    HomePageAdmin adminHPGUI= null;
+                    try {
+                        adminHPGUI = new HomePageAdmin(frame, controller);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    adminHPGUI.frame.setVisible(true);
+                    frame.setVisible(false);
                 }
-                HomePageGUI.frame.setVisible(true);
-                frame.setVisible(false);
+                else {
+                    HomePage HomePageGUI= null;
+                    try {
+                        HomePageGUI = new HomePage(frame, controller);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    HomePageGUI.frame.setVisible(true);
+                    frame.setVisible(false);
+                }
             }
         });
     }

@@ -56,5 +56,18 @@ public class HomePage {
                 frame.setVisible(false);
             }
         });
+        prenotazioniButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                PrenotazioniGUI prenotGui = null;
+                try {
+                    prenotGui = new PrenotazioniGUI(frame, controller);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                prenotGui.frame.setVisible(true);
+                frame.setVisible(false);
+            }
+        });
     }
 }
