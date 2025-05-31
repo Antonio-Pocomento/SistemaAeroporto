@@ -1,13 +1,12 @@
 package gui;
 
 import controller.Controller;
+import custom_exceptions.ImageReadException;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -21,7 +20,7 @@ public class Home {
     private JPanel contentPanel;
     private JLabel loginIcon;
     private static JFrame frame;
-    private Controller controller;
+    private final Controller controller;
 
     public Home() throws IOException {
         controller = new Controller();
@@ -33,38 +32,26 @@ public class Home {
         loginButton.setBorder(new LineBorder(Color.black,3,false));
         exitButton.setBorder(new LineBorder(Color.black,3,false));
 
-
-        exitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                frame.dispose();
+        exitButton.addActionListener(_ -> frame.dispose());
+        loginButton.addActionListener(_ -> {
+            LoginGUI loginGUI;
+            try {
+                loginGUI = new LoginGUI(frame, controller);
+            } catch (IOException ex) {
+                throw new ImageReadException("Errore nella lettura di un'immagine");
             }
+            loginGUI.frame.setVisible(true);
+            frame.setVisible(false);
         });
-        loginButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                LoginGUI loginGUI = null;
-                try {
-                    loginGUI = new LoginGUI(frame, controller);
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
-                loginGUI.frame.setVisible(true);
-                frame.setVisible(false);
+        registerButton.addActionListener(_ -> {
+            RegisterGUI registerGUI;
+            try {
+                registerGUI = new RegisterGUI(frame, controller);
+            } catch (IOException ex) {
+                throw new ImageReadException("Errore nella lettura di un'immagine");
             }
-        });
-        registerButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                RegisterGUI registerGUI = null;
-                try {
-                    registerGUI = new RegisterGUI(frame, controller);
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
-                registerGUI.frame.setVisible(true);
-                frame.setVisible(false);
-            }
+            registerGUI.frame.setVisible(true);
+            frame.setVisible(false);
         });
         registerButton.addMouseListener(new MouseAdapter() {
             @Override
@@ -112,10 +99,10 @@ public class Home {
         frame = new JFrame("Home");
         frame.setContentPane(new Home().homePanel);
 
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.pack();
 
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        frame.setExtendedState(Frame.MAXIMIZED_BOTH);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }

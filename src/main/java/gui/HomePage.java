@@ -6,10 +6,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 
@@ -110,6 +107,45 @@ public class HomePage {
             public void actionPerformed(ActionEvent e) {
                 frameChiamante.setVisible(true);
                 frame.dispose();
+            }
+        });
+        bookingButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                PrenotazioniGUI preGUI = null;
+                try {
+                    preGUI = new PrenotazioniGUI(frame, controller);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                preGUI.frame.setVisible(true);
+                frame.setVisible(false);
+            }
+        });
+        flightsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                VoliGUI volGUI = null;
+                try {
+                    volGUI = new VoliGUI(frame, controller);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                volGUI.frame.setVisible(true);
+                frame.setVisible(false);
+            }
+        });
+        bagsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                BagagliGUI bagGUI = null;
+                try {
+                    bagGUI = new BagagliGUI(frame, controller);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                bagGUI.frame.setVisible(true);
+                frame.setVisible(false);
             }
         });
     }

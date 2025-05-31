@@ -19,4 +19,9 @@ public class Utente {
     public void visualizzaVoli(){
         Volo.printVoli();
     }
+
+    public String getNomeUtente() { return nomeUtente; }
+    public String getEmail() { return email; }
+    public String getPasswordUtente() { return passwordUtente; }
+
 }

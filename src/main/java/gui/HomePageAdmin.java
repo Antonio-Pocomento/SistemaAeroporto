@@ -24,6 +24,7 @@ public class HomePageAdmin {
     private JLabel exitIcon;
     private JLabel bagsIcon;
     private JLabel flightsIcon;
+    private JPanel flightsPanel;
 
     public HomePageAdmin(JFrame frameChiamante, Controller controller) throws IOException {
         frame = new JFrame("Home Page Admin");
@@ -89,6 +90,32 @@ public class HomePageAdmin {
             public void mouseExited(MouseEvent e) {
                 super.mouseExited(e);
                 logoutButton.setBackground(null);
+            }
+        });
+        flightsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                VoliAdminGUI volAdminGUI = null;
+                try {
+                    volAdminGUI = new VoliAdminGUI(frame, controller);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                volAdminGUI.frame.setVisible(true);
+                frame.setVisible(false);
+            }
+        });
+        bagsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                BagagliAdminGUI bagAdminGUI = null;
+                try {
+                    bagAdminGUI = new BagagliAdminGUI(frame, controller);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                bagAdminGUI.frame.setVisible(true);
+                frame.setVisible(false);
             }
         });
     }

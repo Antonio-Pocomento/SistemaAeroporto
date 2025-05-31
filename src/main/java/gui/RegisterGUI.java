@@ -12,6 +12,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.Arrays;
 
 public class RegisterGUI {
     public JFrame frame;
@@ -31,8 +33,6 @@ public class RegisterGUI {
     private JLabel passwordIcon;
     private JPasswordField confirmPasswordField;
     private JLabel confirmPasswordIcon;
-    private JLabel confirmPasswordObb;
-    private JLabel passwordObb;
     private JPanel errorPanel;
     private JLabel errorMessage;
     private JLabel passwordEyeIcon;
@@ -46,7 +46,7 @@ public class RegisterGUI {
     private JLabel confirmPasswordErrMessage;
     private JLabel emailObb;
 
-    public RegisterGUI(JFrame frameChiamante, Controller controlle) throws IOException {
+    public RegisterGUI(JFrame frameChiamante, Controller controller) throws IOException {
         frame = new JFrame("Registrazione");
         frame.setContentPane(registerPanel);
         registerPanel.setLayout(new OverlayLayout(registerPanel));
@@ -65,6 +65,7 @@ public class RegisterGUI {
 
         passwordField.setEchoChar((char) 0);
         confirmPasswordField.setEchoChar((char) 0);
+        //registerButton.setEnabled(false);
 
         confirmPasswordField.setBorder(new LineBorder(Color.black,2,false));
         usernameField.setBorder(new LineBorder(Color.black,2,false));
@@ -84,21 +85,19 @@ public class RegisterGUI {
         });
 
         /* ************************************************* */
-        registerButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                errorPanel.setVisible(true);
-                errorMessage.setVisible(true);
-                // INSERT NEL DATABASE
+        registerButton.addActionListener(e -> {
+            try {
+                controller.registraUtente(usernameField.getText(),emailField.getText(),passwordField.getText());
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(registerButton, "Nome utente già esistente.");
             }
+            // INSERT NEL DATABASE
         });
 
-        returnButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                frameChiamante.setVisible(true);
-                frame.dispose();
-            }
+
+        returnButton.addActionListener(e -> {
+            frameChiamante.setVisible(true);
+            frame.dispose();
         });
         /* ************************************************* */
 
@@ -121,21 +120,21 @@ public class RegisterGUI {
             }
 
             private void aggiornaLabel() {
-                String testo = passwordField.getText();
-                if (testo.length() < 5 || testo.equals("Password")) {
+                char[] testo = passwordField.getPassword();
+                if (testo.length < 5 || Arrays.equals(testo, "Password".toCharArray())) {
                     passwordRating.setText("La Password deve contenere almeno 5 caratteri");
                     passwordRating.setForeground(Color.red);
-                } else if (testo.length() < 10) {
+                } else if (testo.length < 10) {
                     passwordRating.setText("Password: Vulnerabile");
                     passwordRating.setForeground(Color.black);
-                } else if (testo.length() < 14) {
+                } else if (testo.length < 14) {
                     passwordRating.setText("Password: Sicura");
                     passwordRating.setForeground(Color.black);
                 } else {
                     passwordRating.setText("Password: Molto Sicura");
                     passwordRating.setForeground(Color.black);
                 }
-                if(testo.equals(confirmPasswordField.getText())){
+                if(Arrays.equals(testo, confirmPasswordField.getPassword())){
                     confirmPasswordErrMessage.setVisible(false);
                 }
                 else confirmPasswordErrMessage.setVisible(true);

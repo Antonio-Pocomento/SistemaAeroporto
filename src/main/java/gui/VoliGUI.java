@@ -8,6 +8,10 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 
@@ -19,6 +23,8 @@ public class VoliGUI {
     private JScrollPane tablePanel;
     private JTable table1;
     private JButton returnButton;
+    private JButton searchButton;
+    private JPanel tableBackgroundPanel;
 
     VoliGUI(Frame frameChiamante, Controller controller) throws IOException {
         frame = new JFrame("Voli");
@@ -28,6 +34,8 @@ public class VoliGUI {
 
         prenotaButton.setBorder(new LineBorder(Color.black,3,false));
         returnButton.setBorder(new LineBorder(Color.black,3,false));
+        searchButton.setBorder(new LineBorder(Color.black,3,false));
+        tableBackgroundPanel.setBorder(new LineBorder(Color.black,10,false));
 
 
         table1.setModel(controller.getFlightsModel());
@@ -55,5 +63,75 @@ public class VoliGUI {
         frame.pack();
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.setVisible(true);
+        prenotaButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                CheckInGUI checkGUI = null;
+                try {
+                    checkGUI = new CheckInGUI(frame, controller);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                checkGUI.frame.setVisible(true);
+            }
+        });
+        searchButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                CercaVoloGUI cercGUI = null;
+                try {
+                    cercGUI = new CercaVoloGUI(frame, controller);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                cercGUI.frame.setVisible(true);
+            }
+        });
+        returnButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frameChiamante.setVisible(true);
+                frame.dispose();
+            }
+        });
+        searchButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                super.mouseEntered(e);
+                searchButton.setBackground(Color.lightGray);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                super.mouseExited(e);
+                searchButton.setBackground(null);
+            }
+        });
+        prenotaButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                super.mouseEntered(e);
+                prenotaButton.setBackground(Color.lightGray);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                super.mouseExited(e);
+                prenotaButton.setBackground(null);
+            }
+        });
+        returnButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                super.mouseEntered(e);
+                returnButton.setBackground(Color.lightGray);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                super.mouseExited(e);
+                returnButton.setBackground(null);
+            }
+        });
     }
 }

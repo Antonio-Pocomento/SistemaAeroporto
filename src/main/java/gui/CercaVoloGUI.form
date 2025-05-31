@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="gui.CercaVoloGUI">
+  <grid id="27dc6" binding="cercaVoloPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="0" left="0" bottom="0" right="0"/>
+    <constraints>
+      <xy x="20" y="20" width="1832" height="578"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <grid id="1826c" binding="contentPanel" layout-manager="GridLayoutManager" row-count="13" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <grid id="cd5db" binding="fieldsPanel" layout-manager="GridLayoutManager" row-count="4" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints>
+              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                <preferred-size width="2200" height="600"/>
+              </grid>
+            </constraints>
+            <properties>
+              <background color="-5251625"/>
+              <foreground color="-5251625"/>
+            </properties>
+            <border type="none"/>
+            <children>
+              <component id="ad60e" class="javax.swing.JTextField" binding="codeField">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="600" height="40"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <font name="Times New Roman" size="24" style="0"/>
+                  <foreground color="-9144710"/>
+                  <opaque value="true"/>
+                  <text value="Codice Volo"/>
+                </properties>
+              </component>
+              <component id="11c21" class="javax.swing.JTextField" binding="aerOrigineField">
+                <constraints>
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="600" height="40"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <font name="Times New Roman" size="24" style="0"/>
+                  <foreground color="-9144710"/>
+                  <text value="Aeroporto Di Origine"/>
+                </properties>
+              </component>
+              <component id="345a1" class="javax.swing.JTextField" binding="aerArrivoField">
+                <constraints>
+                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="600" height="40"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <font name="Times New Roman" size="24" style="0"/>
+                  <foreground color="-9144710"/>
+                  <text value="Aeroporto Di Arrivo"/>
+                </properties>
+              </component>
+              <component id="27d49" class="javax.swing.JTextField" binding="companyField">
+                <constraints>
+                  <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="600" height="40"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <font name="Times New Roman" size="24" style="0"/>
+                  <foreground color="-9144710"/>
+                  <text value="Compagnia Aerea"/>
+                </properties>
+              </component>
+              <component id="5e21a" class="javax.swing.JTextField" binding="timeField">
+                <constraints>
+                  <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="600" height="40"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <font name="Times New Roman" size="24" style="0"/>
+                  <foreground color="-9144710"/>
+                  <text value="Orario Volo (HH:MM)"/>
+                </properties>
+              </component>
+              <component id="6bdcb" class="javax.swing.JTextField" binding="dateField">
+                <constraints>
+                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="600" height="40"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <font name="Times New Roman" size="24" style="0"/>
+                  <foreground color="-9144710"/>
+                  <text value="Data Volo (DD/MM/YYYY)"/>
+                </properties>
+              </component>
+              <component id="539b0" class="javax.swing.JTextField" binding="seatField">
+                <constraints>
+                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="600" height="40"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <font name="Times New Roman" size="24" style="0"/>
+                  <foreground color="-9144710"/>
+                  <text value="Posti"/>
+                </properties>
+              </component>
+              <component id="ffe96" class="javax.swing.JTextField" binding="delayField">
+                <constraints>
+                  <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="600" height="40"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <font name="Times New Roman" size="24" style="0"/>
+                  <foreground color="-9144710"/>
+                  <text value="Ritardo Volo (HH:MM)"/>
+                </properties>
+              </component>
+              <component id="6d1be" class="javax.swing.JTextField" binding="gateField">
+                <constraints>
+                  <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="600" height="40"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <font name="Times New Roman" size="24" style="0"/>
+                  <foreground color="-9144710"/>
+                  <text value="Numero Gate"/>
+                </properties>
+              </component>
+              <component id="926b8" class="javax.swing.JComboBox" binding="stateBox">
+                <constraints>
+                  <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="600" height="40"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <font name="Times New Roman" size="24" style="0"/>
+                  <foreground color="-16777216"/>
+                  <model>
+                    <item value=""/>
+                    <item value="Programmato"/>
+                    <item value="In Ritardo"/>
+                    <item value="Atterrato"/>
+                    <item value="Decollato"/>
+                    <item value="Cancellato"/>
+                  </model>
+                </properties>
+              </component>
+            </children>
+          </grid>
+          <grid id="e16c2" binding="tableBackgroundPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints>
+              <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <background color="-5251625"/>
+            </properties>
+            <border type="none"/>
+            <children>
+              <scrollpane id="8b431" binding="tablePanel">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="26275" class="javax.swing.JTable" binding="table1" default-binding="true">
+                    <constraints/>
+                    <properties>
+                      <font name="Times New Roman" size="24" style="0"/>
+                      <rowHeight value="40"/>
+                    </properties>
+                  </component>
+                </children>
+              </scrollpane>
+            </children>
+          </grid>
+          <component id="1ed04" class="javax.swing.JButton" binding="cercaButton" default-binding="true">
+            <constraints>
+              <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                <preferred-size width="1200" height="60"/>
+              </grid>
+            </constraints>
+            <properties>
+              <focusable value="false"/>
+              <font name="Times New Roman" size="36" style="0"/>
+              <text value="Cerca"/>
+            </properties>
+          </component>
+          <component id="eeb38" class="javax.swing.JButton" binding="prenotaButton" default-binding="true">
+            <constraints>
+              <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                <preferred-size width="1200" height="60"/>
+              </grid>
+            </constraints>
+            <properties>
+              <focusable value="false"/>
+              <font name="Times New Roman" size="36" style="0"/>
+              <text value="Prenota"/>
+            </properties>
+          </component>
+          <component id="b1090" class="javax.swing.JButton" binding="tornaIndietroButton" default-binding="true">
+            <constraints>
+              <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                <preferred-size width="1200" height="60"/>
+              </grid>
+            </constraints>
+            <properties>
+              <focusable value="false"/>
+              <font name="Times New Roman" size="36" style="0"/>
+              <text value="Torna Indietro"/>
+            </properties>
+          </component>
+          <component id="efed5" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <font name="Lucida Calligraphy" size="48" style="1"/>
+              <text value="Ricerca Voli"/>
+            </properties>
+          </component>
+          <vspacer id="d48f">
+            <constraints>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+            </constraints>
+          </vspacer>
+          <vspacer id="f01a5">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+            </constraints>
+          </vspacer>
+          <vspacer id="aa328">
+            <constraints>
+              <grid row="12" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+            </constraints>
+          </vspacer>
+          <vspacer id="e022c">
+            <constraints>
+              <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+            </constraints>
+          </vspacer>
+          <vspacer id="e6139">
+            <constraints>
+              <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+            </constraints>
+          </vspacer>
+          <vspacer id="d8517">
+            <constraints>
+              <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+            </constraints>
+          </vspacer>
+          <vspacer id="4fa23">
+            <constraints>
+              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+            </constraints>
+          </vspacer>
+        </children>
+      </grid>
+    </children>
+  </grid>
+</form>

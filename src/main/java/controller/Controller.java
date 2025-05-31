@@ -1,6 +1,11 @@
 package controller;
 
+import dao.UtenteDAO;
+import implementazioni_postgres_dao.UtenteImplementazionePostgresDAO;
+import model.Utente;
+
 import javax.swing.table.DefaultTableModel;
+import java.sql.SQLException;
 
 public class Controller {
 
@@ -76,6 +81,15 @@ public class Controller {
                     {false, "BG123", "Caricato"},
                     {false, "BG456", "Ritirabile"},
                     {false, "BG789", "Ritirabile"},
+                    {false, "BG123", "Caricato"},
+                    {false, "BG456", "Ritirabile"},
+                    {false, "BG789", "Ritirabile"},
+                    {false, "BG123", "Caricato"},
+                    {false, "BG456", "Ritirabile"},
+                    {false, "BG789", "Ritirabile"},
+                    {false, "BG456", "Ritirabile"},
+                    {false, "BG789", "Ritirabile"},
+
             },
             new Object[] {"Modifica", "Codice", "Stato"}
     ) {
@@ -92,20 +106,26 @@ public class Controller {
 
     DefaultTableModel bookingTableModel = new DefaultTableModel(
             new Object[][] {
-                    {false, "AZ123", "In Attesa"},
-                    {false, "AZ132", "In Attesa"},
-                    {false, "AZ125", "In Attesa"},
+                    {"AZ123", "A","In Attesa"},
+                    {"AZ132", "A","In Attesa"},
+                    {"AZ125", "A","In Attesa"},
+                    {"AZ123", "A","In Attesa"},
+                    {"AZ132", "A","In Attesa"},
+                    {"AZ125", "A","In Attesa"},
+                    {"AZ123", "A","In Attesa"},
+                    {"AZ132", "A","In Attesa"},
+                    {"AZ125", "A", "In Attesa"},
             },
-            new Object[] {"Modifica", "Codice", "Stato"}
+            new Object[] {"Codice Volo", "Nome Passeggero", "Stato Prenotazione"}
     ) {
         @Override
         public Class<?> getColumnClass(int columnIndex) {
-            return columnIndex == 0 ? Boolean.class : String.class;
+            return String.class;
         }
 
         @Override
         public boolean isCellEditable(int row, int column) {
-            return column == 0;
+            return false;
         }
     };
 
@@ -148,7 +168,7 @@ public class Controller {
     ) {
         @Override
         public boolean isCellEditable(int row, int column) {
-            return true;
+            return column != 0;
         }
     };
 
@@ -164,4 +184,11 @@ public class Controller {
     public DefaultTableModel getBagsTableModel() { return bagsTableModel; }
     public DefaultTableModel getBagsAdminTableModel() { return bagsAdminTableModel; }
     public DefaultTableModel getBookingTableModel() { return bookingTableModel; }
+
+    public void registraUtente(String nomeUtente, String email, String password) throws SQLException {
+        Utente utente = new Utente(nomeUtente, email, password); //in memoria
+        UtenteDAO rDAO = new UtenteImplementazionePostgresDAO();
+        rDAO.registraUtente(utente); //su DB
+
+    }
 }
