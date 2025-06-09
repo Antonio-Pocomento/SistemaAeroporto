@@ -5,7 +5,6 @@ import controller.Controller;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -14,6 +13,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 
 public class VoliAdminGUI {
     public JFrame frame;
@@ -24,8 +24,6 @@ public class VoliAdminGUI {
     private JButton returnButton;
     private JTable table1;
     private JPanel tableBackgroundPanel;
-    private JLabel modifyErrMessage;
-    private JPanel modifyErrPanel;
     private JButton insertButton;
     private JButton cercaVoloButton;
 
@@ -35,7 +33,7 @@ public class VoliAdminGUI {
         voliAdminPanel.setLayout(new OverlayLayout(voliAdminPanel));
         contentPanel.setOpaque(false);
 
-        table1.setModel(controller.getFlightsAdminModel());
+        table1.setModel(controller.getFlightsAdmin());
         table1.getTableHeader().setReorderingAllowed(false);
         table1.getTableHeader().setResizingAllowed(false);
         table1.getTableHeader().setFont(new Font("Times New Roman", Font.BOLD, 28));
@@ -44,21 +42,21 @@ public class VoliAdminGUI {
         tablePanel.setOpaque(false);
         tablePanel.getViewport().setOpaque(false);
 
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-
         TableColumnModel columnModel = table1.getColumnModel();
+        CustomFlightCellRenderer customRenderer = new CustomFlightCellRenderer();
+
         for (int i = 0; i < columnModel.getColumnCount(); i++) {
-            columnModel.getColumn(i).setCellRenderer(centerRenderer);
+            columnModel.getColumn(i).setCellRenderer(customRenderer);
         }
         tableBackgroundPanel.setBorder(new LineBorder(Color.black,10,false));
 
         DefaultCellEditor editor = new DefaultCellEditor(new JTextField());
         editor.getComponent().setFont(table1.getFont());
         table1.setDefaultEditor(Object.class, editor);
+        tablePanel.setPreferredSize(new Dimension(2100,table1.getRowHeight()*(Math.min(table1.getRowCount(), 6)+1)));
+        tableBackgroundPanel.setPreferredSize(new Dimension(tablePanel.getPreferredSize().width+100,tablePanel.getPreferredSize().height+100));
 
         voliAdminPanel.add(new BasicBackgroundPanel(ImageIO.read(new File("src/main/images/simpleBackground.jpg"))));
-        modifyErrPanel.setBorder(new LineBorder(Color.black,2,false));
         insertButton.setBorder(new LineBorder(Color.black,3,false));
         modifyButton.setBorder(new LineBorder(Color.black,3,false));
         returnButton.setBorder(new LineBorder(Color.black,3,false));
@@ -72,8 +70,12 @@ public class VoliAdminGUI {
         modifyButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // TODO modifiche nel DB
-                modifyErrPanel.setVisible(true);
+                try {
+                    controller.salvaModificheDaTabella(table1);
+                } catch (SQLException ex) {
+                    // todo jpanel error
+                    throw new RuntimeException(ex);
+                }
             }
         });
         returnButton.addActionListener(new ActionListener() {

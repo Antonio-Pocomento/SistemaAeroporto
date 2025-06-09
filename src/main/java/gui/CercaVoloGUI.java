@@ -11,6 +11,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 
 public class CercaVoloGUI {
     private JPanel cercaVoloPanel;

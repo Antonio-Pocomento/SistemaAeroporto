@@ -38,26 +38,8 @@ public class UtenteGenerico extends Utente {
         System.out.println("\nPrenotazione aggiunta");
     }
 
-    public void cercaPrenotazioni(int codiceVolo) {
-        System.out.println("\nPrenotazioni per il volo "+codiceVolo+":");
-        for(Prenotazione prenotazione : prenotazioniUtente) {
-            if(prenotazione.getVolo().getCodice() == codiceVolo) {
-                prenotazione.printPrenotazione();
-            }
-        }
-    }
-
-    public void cercaPrenotazioni(String nomePasseggero) {
-        System.out.println("\nPrenotazioni per il passeggero "+nomePasseggero+":");
-        for(Prenotazione prenotazione : prenotazioniUtente) {
-            if(prenotazione.getPasseggero().getNome().equals(nomePasseggero)) {
-                prenotazione.printPrenotazione();
-            }
-        }
-    }
-
     public void segnalaSmarrimento(Bagaglio bagaglio){
-        bagaglio.setStato(StatoBagaglio.smarrito);
+        bagaglio.setStato(StatoBagaglio.SMARRITO);
     }
 
     public void modificaPrenotazione(Prenotazione prenotazione, StatoPrenotazione statoPrenotazione) {

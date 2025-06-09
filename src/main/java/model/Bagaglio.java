@@ -7,7 +7,7 @@ public class Bagaglio {
 
     public Bagaglio(int codice, Passeggero passeggero) {
         this.codice = codice;
-        this.stato = StatoBagaglio.ritirabile;
+        this.stato = StatoBagaglio.RITIRABILE;
         this.passeggero = passeggero;
     }
 
@@ -17,10 +17,5 @@ public class Bagaglio {
     public void setStato(StatoBagaglio stato) {
         this.stato = stato;
         System.out.println("Stato del bagaglio modificato a: "+stato);
-    }
-
-    public void printBagaglio(){
-        System.out.println("Bagaglio: ");
-        System.out.println(codice+" "+stato);
     }
 }

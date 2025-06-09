@@ -11,6 +11,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 
 public class CercaVoloAdminGUI {
     private JPanel cercaVoloPanel;
@@ -51,7 +52,7 @@ public class CercaVoloAdminGUI {
         salvaModificheButton.setBorder(new LineBorder(Color.BLACK,3));
         tornaIndietroButton.setBorder(new LineBorder(Color.BLACK,3));
 
-        table1.setModel(controller.getFlightsAdminModel());
+        table1.setModel(controller.getFlightsAdmin());
 
         table1.getTableHeader().setReorderingAllowed(false);
         table1.getTableHeader().setResizingAllowed(false);
@@ -70,7 +71,7 @@ public class CercaVoloAdminGUI {
         }
         tableBackgroundPanel.setBorder(new LineBorder(Color.black,10,false));
         fieldsPanel.setBorder(new LineBorder(Color.black,10,false));
-        tablePanel.setPreferredSize(new Dimension(2100,table1.getRowHeight()*Math.min(table1.getRowCount(), 6)));
+        tablePanel.setPreferredSize(new Dimension(2100,table1.getRowHeight()*(Math.min(table1.getRowCount(), 6)+1)));
         tableBackgroundPanel.setPreferredSize(new Dimension(tablePanel.getPreferredSize().width+100,tablePanel.getPreferredSize().height+100));
 
         DefaultCellEditor editor = new DefaultCellEditor(new JTextField());

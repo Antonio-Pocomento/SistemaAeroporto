@@ -9,16 +9,16 @@ public class ConnessioneDatabase {
     // ATTRIBUTI
     private static ConnessioneDatabase instance;
     public Connection connection = null;
-    private String nome = "postgres";
-    private String password = "password";
-    private String url = "jdbc:postgresql://localhost:5432/Aeroporto";
-    private String driver = "org.postgresql.Driver";
+    private static final String NOME = "postgres";
+    private static final String PASSWORD = "password";
+    private static final String URL = "jdbc:postgresql://localhost:5432/Aeroporto";
+    private static final String DRIVER = "org.postgresql.Driver";
 
     // COSTRUTTORE
     private ConnessioneDatabase() throws SQLException {
         try {
-            Class.forName(driver);
-            connection = DriverManager.getConnection(url, nome, password);
+            Class.forName(DRIVER);
+            connection = DriverManager.getConnection(URL, NOME, PASSWORD);
 
         } catch (ClassNotFoundException ex) {
             System.out.println("Database Connection Creation Failed : " + ex.getMessage());

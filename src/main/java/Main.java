@@ -10,7 +10,7 @@ public class Main {
     // Nessuna gestione di errore per valori null
     // Main puramente di prova
     public static void main(String[] args) {
-        System.out.println("\nBenvenuto. Accedi utilizzando il tuo Nome Utente o Email e la Password.");
+        /*System.out.println("\nBenvenuto. Accedi utilizzando il tuo Nome Utente o Email e la Password.");
         System.out.println("Se non hai un account utente, puoi crearne uno!");
         System.out.println("\nCreazione account admin");
         Amministratore admin = new Amministratore("admin", "admin@gmail.com", "admin");
@@ -56,6 +56,6 @@ public class Main {
             }
             else System.out.println("Errore: Accesso non riuscito");
         }
-        else System.out.println("Errore: Accesso non riuscito");
+        else System.out.println("Errore: Accesso non riuscito");*/
     }
 }

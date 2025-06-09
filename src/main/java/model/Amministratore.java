@@ -3,31 +3,17 @@ package model;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Amministratore extends Utente {
-    private ArrayList<Volo> voliGestiti = new ArrayList<Volo>();
+    private ArrayList<Volo> voliGestiti = new ArrayList<>();
 
     public Amministratore(String nomeUtente, String email, String passwordUtente) {
         super(nomeUtente, email, passwordUtente);
     }
 
-    public ArrayList<Volo> getVoliGestiti() {
+    public List<Volo> getVoliGestiti() {
         return voliGestiti;
-    }
-
-    public Volo getVoloGestito(int codice)
-    {
-        for(Volo v : voliGestiti)
-        {
-            if(v.getCodice() == codice) return v;
-        }
-        System.out.println("Errore: Volo non trovato");
-        return null;
-    }
-
-    public void inserisciVolo(Volo volo){
-        volo.addVolo();
-        System.out.println("Volo aggiunto");
     }
 
     public void modificaCodiceVolo(Volo volo, int codice){
@@ -47,26 +33,6 @@ public class Amministratore extends Utente {
     }
     public void modificaNumeroGateVolo(Volo volo, int numeroGate){
         volo.setNumeroGate(numeroGate);
-    }
-
-    public void visualizzaBagagliSmarriti()
-    {
-        System.out.println("\nBagagli smarriti per i voli attualmente gestiti:");
-        for(Volo volo : voliGestiti)
-        {
-            ArrayList<Prenotazione> prenotazioni = volo.getPrenotazioni();
-            for(Prenotazione prenotazione : prenotazioni)
-            {
-                ArrayList<Bagaglio> bagagliPasseggero = prenotazione.getPasseggero().getBagagli();
-                for(Bagaglio bagaglio : bagagliPasseggero)
-                {
-                    if(bagaglio.getStato() == StatoBagaglio.smarrito)
-                    {
-                        bagaglio.printBagaglio();
-                    }
-                }
-            }
-        }
     }
 
     public void modificaStatoBagaglio(Bagaglio bagaglio, StatoBagaglio stato){

@@ -1,6 +1,9 @@
 package gui;
 
 import controller.Controller;
+import custom_exceptions.EmailAlreadyExistsException;
+import custom_exceptions.ImageReadException;
+import custom_exceptions.UserAlreadyExistsException;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -16,38 +19,27 @@ import java.sql.SQLException;
 import java.util.Arrays;
 
 public class RegisterGUI {
-    public JFrame frame;
+    public JFrame frame = new JFrame("Registrazione");
     private JPanel registerPanel;
     private JPanel contentPanel;
     private JButton registerButton;
     private JButton returnButton;
-    private JPanel backgroundContentPanel;
-    private JPanel formPanel;
     private JTextField usernameField;
     private JTextField emailField;
     private JPasswordField passwordField;
-    private JPanel usernamePanel;
-    private JLabel usernameObb;
     private JLabel usernameIcon;
     private JLabel emailIcon;
     private JLabel passwordIcon;
     private JPasswordField confirmPasswordField;
     private JLabel confirmPasswordIcon;
-    private JPanel errorPanel;
-    private JLabel errorMessage;
     private JLabel passwordEyeIcon;
     private JLabel confirmPasswordEyeIcon;
     private JLabel passwordRating;
     private JLabel usernameErrMessage;
     private JLabel emailErrMessage;
-    private JPanel emailPanel;
-    private JPanel passwordPanel;
-    private JPanel confirmPasswordPanel;
     private JLabel confirmPasswordErrMessage;
-    private JLabel emailObb;
 
     public RegisterGUI(JFrame frameChiamante, Controller controller) throws IOException {
-        frame = new JFrame("Registrazione");
         frame.setContentPane(registerPanel);
         registerPanel.setLayout(new OverlayLayout(registerPanel));
         registerPanel.add(contentPanel);
@@ -57,7 +49,6 @@ public class RegisterGUI {
         emailIcon.setIcon(new ImageIcon(ImageIO.read(new File("src/main/images/emailIcon.png"))));
         passwordIcon.setIcon(new ImageIcon(ImageIO.read(new File("src/main/images/lock.png"))));
         confirmPasswordIcon.setIcon(new ImageIcon(ImageIO.read(new File("src/main/images/lock.png"))));
-        errorPanel.setBorder(new LineBorder(Color.BLACK,2,false));
         confirmPasswordEyeIcon.setIcon(new ImageIcon(ImageIO.read(new File("src/main/images/openEye.png"))));
         passwordEyeIcon.setIcon(new ImageIcon(ImageIO.read(new File("src/main/images/openEye.png"))));
         registerButton.setBorder(new LineBorder(Color.black,3,false));
@@ -65,17 +56,16 @@ public class RegisterGUI {
 
         passwordField.setEchoChar((char) 0);
         confirmPasswordField.setEchoChar((char) 0);
-        //registerButton.setEnabled(false);
 
         confirmPasswordField.setBorder(new LineBorder(Color.black,2,false));
         usernameField.setBorder(new LineBorder(Color.black,2,false));
         passwordField.setBorder(new LineBorder(Color.black,2,false));
         emailField.setBorder(new LineBorder(Color.black,2,false));
 
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.pack();
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        frame.setExtendedState(Frame.MAXIMIZED_BOTH);
         frame.setVisible(true);
         frame.addWindowListener(new WindowAdapter() {
             @Override
@@ -85,17 +75,43 @@ public class RegisterGUI {
         });
 
         /* ************************************************* */
-        registerButton.addActionListener(e -> {
+        registerButton.addActionListener(_ -> {
             try {
-                controller.registraUtente(usernameField.getText(),emailField.getText(),passwordField.getText());
+                controller.registraUtente(usernameField.getText().trim(),emailField.getText().trim(),passwordField.getPassword());
+                JPanel panel = new JPanel();
+                panel.setPreferredSize(new Dimension(1000, 100));
+                JLabel label = new JLabel("Registrazione avvenuta con successo!", SwingConstants.CENTER);
+                label.setFont(new Font("Times New Roman", Font.BOLD, 36));
+                panel.add(label);
+                JOptionPane.showMessageDialog(null, panel, "Registrazione riuscita", JOptionPane.INFORMATION_MESSAGE);
             } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(registerButton, "Nome utente già esistente.");
+                JPanel panel = new JPanel();
+                panel.setPreferredSize(new Dimension(1000, 150));
+                JLabel label = new JLabel("<html>Qualcosa è andato storto.<br>Assicurati di aver inserito correttamente i dati.</html>", SwingConstants.CENTER);
+                label.setFont(new Font("Times New Roman", Font.BOLD, 36));
+                panel.add(label);
+                JOptionPane.showMessageDialog(null, panel, "Errore registrazione", JOptionPane.ERROR_MESSAGE);
             }
-            // INSERT NEL DATABASE
+              catch (UserAlreadyExistsException ex) {
+                  JPanel panel = new JPanel();
+                  panel.setPreferredSize(new Dimension(1000, 100));
+                  JLabel label = new JLabel("Nome Utente già in uso!", SwingConstants.CENTER);
+                  label.setFont(new Font("Times New Roman", Font.BOLD, 36));
+                  panel.add(label);
+                  JOptionPane.showMessageDialog(null, panel, "Errore registrazione", JOptionPane.ERROR_MESSAGE);
+              }
+              catch (EmailAlreadyExistsException ex) {
+                  JPanel panel = new JPanel();
+                  panel.setPreferredSize(new Dimension(1000, 100));
+                  JLabel label = new JLabel("È già presente un account che usa questa email!", SwingConstants.CENTER);
+                  label.setFont(new Font("Times New Roman", Font.BOLD, 36));
+                  panel.add(label);
+                  JOptionPane.showMessageDialog(null, panel, "Errore registrazione", JOptionPane.ERROR_MESSAGE);
+              }
         });
 
 
-        returnButton.addActionListener(e -> {
+        returnButton.addActionListener(_ -> {
             frameChiamante.setVisible(true);
             frame.dispose();
         });
@@ -116,13 +132,13 @@ public class RegisterGUI {
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                aggiornaLabel(); // usato per campi di testo styled, non serve spesso
+                aggiornaLabel();
             }
 
             private void aggiornaLabel() {
                 char[] testo = passwordField.getPassword();
-                if (testo.length < 5 || Arrays.equals(testo, "Password".toCharArray())) {
-                    passwordRating.setText("La Password deve contenere almeno 5 caratteri");
+                if (testo.length < 8 || Arrays.equals(testo, "Password".toCharArray())) {
+                    passwordRating.setText("La Password deve contenere almeno 8 caratteri");
                     passwordRating.setForeground(Color.red);
                 } else if (testo.length < 10) {
                     passwordRating.setText("Password: Vulnerabile");
@@ -134,10 +150,8 @@ public class RegisterGUI {
                     passwordRating.setText("Password: Molto Sicura");
                     passwordRating.setForeground(Color.black);
                 }
-                if(Arrays.equals(testo, confirmPasswordField.getPassword())){
-                    confirmPasswordErrMessage.setVisible(false);
-                }
-                else confirmPasswordErrMessage.setVisible(true);
+                confirmPasswordErrMessage.setVisible(!Arrays.equals(testo, confirmPasswordField.getPassword()));
+                registerButton.setEnabled(controller.canPressRegister(usernameField.getText().trim(),emailField.getText().trim(),passwordField.getPassword(),confirmPasswordField.getPassword()));
             }
         });
 
@@ -155,17 +169,18 @@ public class RegisterGUI {
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                aggiornaLabel(); // usato per campi di testo styled, non serve spesso
+                aggiornaLabel();
             }
 
             private void aggiornaLabel() {
                 String testo = usernameField.getText();
-                if (testo.length() < 5 || testo.equals("Nome Utente")) {
-                    usernameErrMessage.setText("Il Nome Utente deve contenere almeno 5 caratteri");
+                if (testo.length() < 3 || testo.equals("Nome Utente")) {
+                    usernameErrMessage.setText("Il Nome Utente deve contenere almeno 3 caratteri");
                     usernameErrMessage.setVisible(true);
                 } else {
                     usernameErrMessage.setVisible(false);
                 }
+                registerButton.setEnabled(controller.canPressRegister(usernameField.getText().trim(),emailField.getText().trim(),passwordField.getPassword(),confirmPasswordField.getPassword()));
             }
         });
 
@@ -183,15 +198,36 @@ public class RegisterGUI {
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                aggiornaLabel(); // usato per campi di testo styled, non serve spesso
+                aggiornaLabel();
             }
 
             private void aggiornaLabel() {
-                String testo = confirmPasswordField.getText();
-                if(testo.equals(passwordField.getText())){
-                    confirmPasswordErrMessage.setVisible(false);
-                }
-                else confirmPasswordErrMessage.setVisible(true);
+                confirmPasswordErrMessage.setVisible(!Arrays.equals(confirmPasswordField.getPassword(), passwordField.getPassword()));
+                registerButton.setEnabled(controller.canPressRegister(usernameField.getText().trim(),emailField.getText().trim(),passwordField.getPassword(),confirmPasswordField.getPassword()));
+            }
+        });
+
+        Document doc4 = emailField.getDocument();
+        doc4.addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                aggiornaLabel();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                aggiornaLabel();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                aggiornaLabel();
+            }
+
+            private void aggiornaLabel() {
+                String testo = emailField.getText();
+                emailErrMessage.setVisible(!controller.isEmailValid(testo));
+                registerButton.setEnabled(controller.canPressRegister(usernameField.getText().trim(),emailField.getText().trim(),passwordField.getPassword(),confirmPasswordField.getPassword()));
             }
         });
         /* ************************************************* */
@@ -201,20 +237,20 @@ public class RegisterGUI {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                if(!confirmPasswordField.getText().equals("Conferma Password")) {
-                    if(confirmPasswordField.getEchoChar() == '\u25CF') {
+                if(!Arrays.equals(confirmPasswordField.getPassword(), "Conferma Password".toCharArray())) {
+                    if(confirmPasswordField.getEchoChar() == '●') {
                         confirmPasswordField.setEchoChar((char) 0);
                         try {
                             confirmPasswordEyeIcon.setIcon(new ImageIcon(ImageIO.read(new File("src/main/images/closedEye.png"))));
                         } catch (IOException ex) {
-                            throw new RuntimeException(ex);
+                            throw new ImageReadException(ex.getMessage());
                         }
                     }
-                    else {confirmPasswordField.setEchoChar('\u25CF');
+                    else {confirmPasswordField.setEchoChar('●');
                         try {
                             confirmPasswordEyeIcon.setIcon(new ImageIcon(ImageIO.read(new File("src/main/images/openEye.png"))));
                         } catch (IOException ex) {
-                            throw new RuntimeException(ex);
+                            throw new ImageReadException(ex.getMessage());
                         }
                     }
                 }
@@ -225,20 +261,20 @@ public class RegisterGUI {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                if(!passwordField.getText().equals("Password")) {
-                    if(passwordField.getEchoChar() == '\u25CF') {
+                if(!Arrays.equals(passwordField.getPassword(), "Password".toCharArray())) {
+                    if(passwordField.getEchoChar() == '●') {
                         passwordField.setEchoChar((char) 0);
                         try {
                             passwordEyeIcon.setIcon(new ImageIcon(ImageIO.read(new File("src/main/images/closedEye.png"))));
                         } catch (IOException ex) {
-                            throw new RuntimeException(ex);
+                            throw new ImageReadException(ex.getMessage());
                         }
                     }
-                    else {passwordField.setEchoChar('\u25CF');
+                    else {passwordField.setEchoChar('●');
                         try {
                             passwordEyeIcon.setIcon(new ImageIcon(ImageIO.read(new File("src/main/images/openEye.png"))));
                         } catch (IOException ex) {
-                            throw new RuntimeException(ex);
+                            throw new ImageReadException(ex.getMessage());
                         }
                     }
                 }
@@ -251,7 +287,8 @@ public class RegisterGUI {
             @Override
             public void mouseEntered(MouseEvent e) {
                 super.mouseEntered(e);
-                registerButton.setBackground(Color.lightGray);
+                if(registerButton.isEnabled())
+                    registerButton.setBackground(Color.lightGray);
             }
 
             @Override
@@ -288,7 +325,7 @@ public class RegisterGUI {
             @Override
             public void focusLost(FocusEvent e) {
                 super.focusLost(e);
-                if(usernameField.getText().equals("")) {
+                if(usernameField.getText().isBlank()) {
                     usernameField.setForeground(Color.gray);
                     usernameField.setText("Nome Utente");
                 }
@@ -307,7 +344,7 @@ public class RegisterGUI {
             @Override
             public void focusLost(FocusEvent e) {
                 super.focusLost(e);
-                if(emailField.getText().equals("")) {
+                if(emailField.getText().isBlank()) {
                     emailField.setForeground(Color.gray);
                     emailField.setText("Email");
                 }
@@ -317,17 +354,17 @@ public class RegisterGUI {
             @Override
             public void focusGained(FocusEvent e) {
                 super.focusGained(e);
-                if(passwordField.getText().equals("Password")) {
+                if(Arrays.equals(passwordField.getPassword(), "Password".toCharArray())) {
                     passwordField.setForeground(Color.black);
                     passwordField.setText("");
-                    passwordField.setEchoChar('\u25CF');
+                    passwordField.setEchoChar('●');
                 }
             }
 
             @Override
             public void focusLost(FocusEvent e) {
                 super.focusLost(e);
-                if(passwordField.getText().equals("")) {
+                if(new String(passwordField.getPassword()).isBlank()) {
                     passwordField.setForeground(Color.gray);
                     passwordField.setText("Password");
                     passwordField.setEchoChar((char) 0);
@@ -338,17 +375,17 @@ public class RegisterGUI {
             @Override
             public void focusGained(FocusEvent e) {
                 super.focusGained(e);
-                if(confirmPasswordField.getText().equals("Conferma Password")) {
+                if(Arrays.equals(confirmPasswordField.getPassword(), "Conferma Password".toCharArray())) {
                     confirmPasswordField.setForeground(Color.black);
                     confirmPasswordField.setText("");
-                    confirmPasswordField.setEchoChar('\u25CF');
+                    confirmPasswordField.setEchoChar('●');
                 }
             }
 
             @Override
             public void focusLost(FocusEvent e) {
                 super.focusLost(e);
-                if(confirmPasswordField.getText().equals("")) {
+                if(new String(confirmPasswordField.getPassword()).isBlank()) {
                     confirmPasswordField.setForeground(Color.gray);
                     confirmPasswordField.setText("Conferma Password");
                     confirmPasswordField.setEchoChar((char) 0);
@@ -356,5 +393,41 @@ public class RegisterGUI {
             }
         });
         /* ************************************************* */
+        passwordField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                super.keyTyped(e);
+                if (e.getKeyChar() == ' ') {
+                    e.consume();
+                }
+            }
+        });
+        confirmPasswordField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                super.keyTyped(e);
+                if (e.getKeyChar() == ' ') {
+                    e.consume();
+                }
+            }
+        });
+        usernameField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                super.keyTyped(e);
+                if (e.getKeyChar() == ' ') {
+                    e.consume();
+                }
+            }
+        });
+        emailField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                super.keyTyped(e);
+                if (e.getKeyChar() == ' ') {
+                    e.consume();
+                }
+            }
+        });
     }
 }

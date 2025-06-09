@@ -18,30 +18,21 @@ public class Volo {
     private StatoVolo stato;
     private Integer numeroGate;
 
-    private static ArrayList<Volo> voli = new ArrayList<Volo>();
     private ArrayList<Prenotazione> prenotazioni = new ArrayList<Prenotazione>();
 
-    public Volo(int codice, int nPosti, String compagniaAerea, String aeroportoOrigine, String aeroportoDestinazione, LocalDate data,
-                LocalTime orario, Integer numeroGate) {
+    public Volo(int codice, int nPosti, int postiDisponibili, String compagniaAerea, String aeroportoOrigine, String aeroportoDestinazione, LocalDate data,
+                LocalTime orario, LocalTime ritardo, StatoVolo stato, Integer numeroGate) {
         this.codice = codice;
         this.nPosti = nPosti;
-        this.postiDisponibili = nPosti;
+        this.postiDisponibili = postiDisponibili;
         this.compagniaAerea = compagniaAerea;
         this.aeroportoOrigine = aeroportoOrigine;
         this.aeroportoDestinazione = aeroportoDestinazione;
         this.data = data;
         this.orario = orario;
-        this.ritardo = LocalTime.of(0,0);
-        this.stato = StatoVolo.programmato;
+        this.ritardo = ritardo;
+        this.stato = stato;
         this.numeroGate = numeroGate;
-    }
-
-    public static void printVoli(){
-        System.out.println("\nVoli: ");
-        for(Volo volo : voli){
-            System.out.println(volo.codice + " " + volo.postiDisponibili + " " + volo.compagniaAerea + " " + volo.aeroportoOrigine + " " + volo.aeroportoDestinazione + " " + volo.data + " "
-            + volo.orario.truncatedTo(ChronoUnit.MINUTES) + " " + volo.ritardo.truncatedTo(ChronoUnit.MINUTES) + " " + volo.stato + " " + volo.numeroGate);
-        }
     }
 
     /// /// GETTERs
@@ -69,7 +60,6 @@ public class Volo {
         prenotazioni.add(prenotazione);
         postiDisponibili--;
     }
-    public void addVolo() {voli.add(this);}
 
     /// /// SETTERs
     public void setCodice(int codice) {this.codice = codice;}
@@ -77,7 +67,7 @@ public class Volo {
     public void setOrario(LocalTime orario) {this.orario = orario;}
     public void setRitardo(LocalTime ritardo) {this.ritardo = ritardo;}
     public void setStato(StatoVolo stato) {this.stato = stato;}
-    public void setNumeroGate(int numeroGate) {this.numeroGate = numeroGate;}
+    public void setNumeroGate(Integer numeroGate) {this.numeroGate = numeroGate;}
     /// ///
 
 }

@@ -16,8 +16,7 @@ public class Prenotazione {
         this.numeroBiglietto = numeroBiglietto+prenotazioniEffettuate;
         prenotazioniEffettuate++;
         this.postoAssegnato = volo.getNPosti()-volo.getPostiDisponibili()+1;
-        this.stato = StatoPrenotazione.inAttesa;
-        checkIn();
+        this.stato = StatoPrenotazione.IN_ATTESA;
         this.volo = volo;
         this.utente = utente;
     }
@@ -33,19 +32,5 @@ public class Prenotazione {
     }
     public StatoPrenotazione getStatoPrenotazione() {
         return stato;
-    }
-
-    public void checkIn() {
-        // Valori di prova, da sostituire con input e interfaccia
-        passeggero = new Passeggero("Ciro", "", "Rampone","TestCodice",this);
-        for(int i = 1; i < 3; i++){
-            Bagaglio b = new Bagaglio(i, passeggero);
-            passeggero.addBagaglio(b);
-        }
-    }
-
-    public void printPrenotazione() {
-        System.out.println("[#Biglietto]: " + numeroBiglietto);
-        System.out.println("Posto: " +postoAssegnato+" Stato: "+stato);
     }
 }
