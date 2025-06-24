@@ -2,59 +2,37 @@ package gui;
 
 import controller.Controller;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
-import java.io.IOException;
+import java.sql.SQLException;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class PrenotazioniGUI {
-    public JFrame frame;
+    public final JFrame frame = new JFrame("Prenotazioni");
     private JPanel prenotazioniPanel;
     private JPanel contentPanel;
     private JScrollPane bookingPanel;
     private JTable table1;
     private JButton modifyButton;
-    private JComboBox modifyBox;
+    private JComboBox<String> modifyBox;
     private JButton returnButton;
     private JPanel bookingBackgroundPanel;
     private JTextField passengerField;
     private JTextField codeField;
     private JButton cercaButton;
     private JPanel fieldPanel;
+    private static final String DEFAULT_PASSENGER_TEXT = "Nome Passeggero";
+    private static final String DEFAULT_CODEFIELD_TEXT = "Codice Volo Prenotato";
 
-    public PrenotazioniGUI(JFrame frameChiamante, Controller controller) throws IOException {
-        frame = new JFrame("Prenotazioni");
-        frame.setContentPane(prenotazioniPanel);
-        prenotazioniPanel.setLayout(new OverlayLayout(prenotazioniPanel));
-        contentPanel.setOpaque(false);
-        prenotazioniPanel.add(contentPanel);
-        prenotazioniPanel.add(new BasicBackgroundPanel(ImageIO.read(new File("src/main/images/simpleBackground.jpg"))));
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLocationRelativeTo(null);
-        frame.pack();
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        frame.setVisible(true);
-        //modifyPanel.setOpaque(false);
-        modifyBox.addItem("Conferma");
-        modifyBox.addItem("Cancella");
+    public PrenotazioniGUI(JFrame frameChiamante, Controller controller) {
+        UtilFunctionsForGUI.setupLayoutAndBackground(frame,prenotazioniPanel);
 
-        table1.setModel(controller.getBookingTableModel());
-        table1.getTableHeader().setReorderingAllowed(false);
-        table1.getTableHeader().setResizingAllowed(false);
-        table1.getTableHeader().setFont(new Font("Times New Roman", Font.PLAIN, 28));
-        bookingPanel.setViewportView(table1);
-        bookingPanel.setPreferredSize(new Dimension(2100,table1.getRowHeight()*Math.min(table1.getRowCount(), 6)));
-        bookingBackgroundPanel.setPreferredSize(new Dimension(bookingPanel.getPreferredSize().width+100,bookingPanel.getPreferredSize().height+100));
-        //table1.setOpaque(false);
-        //bookingPanel.setOpaque(false);
-        //bookingPanel.getViewport().setOpaque(false);
+        TableSetter.setupReservationsTable(table1,bookingPanel,bookingBackgroundPanel,controller.getBookingTableModel(),5);
 
-        bookingBackgroundPanel.setBorder(new LineBorder(Color.BLACK,10));
         fieldPanel.setBorder(new LineBorder(Color.BLACK,10));
         modifyBox.setBorder(new LineBorder(Color.BLACK,2));
         modifyButton.setBorder(new LineBorder(Color.BLACK,3));
@@ -63,13 +41,13 @@ public class PrenotazioniGUI {
         codeField.setBorder(new LineBorder(Color.BLACK,2));
         passengerField.setBorder(new LineBorder(Color.BLACK,2));
 
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        UtilFunctionsForGUI.addHoverEffect(returnButton);
+        UtilFunctionsForGUI.addHoverEffect(modifyButton);
+        UtilFunctionsForGUI.addHoverEffect(cercaButton);
+        UtilFunctionsForGUI.addTextFieldPlaceholder(passengerField,DEFAULT_PASSENGER_TEXT);
+        UtilFunctionsForGUI.addTextFieldPlaceholder(codeField,DEFAULT_CODEFIELD_TEXT);
+        UtilFunctionsForGUI.setupFrame(frame);
 
-        TableColumnModel columnModel = table1.getColumnModel();
-        for (int i = 0; i < columnModel.getColumnCount(); i++) {
-            columnModel.getColumn(i).setCellRenderer(centerRenderer);
-        }
 
         frame.addWindowListener(new WindowAdapter() {
             @Override
@@ -77,89 +55,26 @@ public class PrenotazioniGUI {
                 contentPanel.requestFocusInWindow();
             }
         });
-
-        prenotazioniPanel.add(new BasicBackgroundPanel(ImageIO.read(new File("src/main/images/simpleBackground.jpg"))));
-        returnButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                frameChiamante.setVisible(true);
-                frame.dispose();
+        returnButton.addActionListener(_ -> {
+            frameChiamante.setVisible(true);
+            frame.dispose();
+        });
+        cercaButton.addActionListener(_ -> {
+            try {
+                controller.cercaPrenotazione(codeField.getText().trim(),passengerField.getText().trim());
+            } catch (SQLException ex) {
+                ErrorPanel.showErrorDialog(null,"Qualcosa è andato storto","Errore Ricerca Prenotazione");
+                Logger.getLogger(LoginGUI.class.getName()).log(Level.SEVERE, "Errore Ricerca Prenotazione", ex);
             }
         });
-        returnButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                super.mouseEntered(e);
-                returnButton.setBackground(Color.lightGray);
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                super.mouseExited(e);
-                returnButton.setBackground(null);
-            }
-        });
-        modifyButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                super.mouseEntered(e);
-                modifyButton.setBackground(Color.lightGray);
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                super.mouseExited(e);
-                modifyButton.setBackground(null);
-            }
-        });
-        cercaButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                super.mouseEntered(e);
-                cercaButton.setBackground(Color.lightGray);
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                super.mouseExited(e);
-                cercaButton.setBackground(null);
-            }
-        });
-        passengerField.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                super.focusGained(e);
-                if(passengerField.getText().equals("Nome Passeggero")) {
-                    passengerField.setForeground(Color.black);
-                    passengerField.setText("");
-                }
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-                super.focusLost(e);
-                if(passengerField.getText().equals("")) {
-                    passengerField.setForeground(Color.gray);
-                    passengerField.setText("Nome Passeggero");
-                }
-            }
-        });
-        codeField.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                super.focusGained(e);
-                if(codeField.getText().equals("Codice Volo Prenotato")) {
-                    codeField.setForeground(Color.black);
-                    codeField.setText("");
-                }
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-                super.focusLost(e);
-                if(codeField.getText().equals("")) {
-                    codeField.setForeground(Color.gray);
-                    codeField.setText("Codice Volo Prenotato");
+        modifyButton.addActionListener(_ -> {
+            for (int row : table1.getSelectedRows()) {
+                int numBiglietto = (int) table1.getValueAt(row, 0);
+                try {
+                    controller.modificaPrenotazione(numBiglietto, Objects.requireNonNull(modifyBox.getSelectedItem()).toString().trim());
+                } catch (SQLException ex) {
+                    ErrorPanel.showErrorDialog(null,"Qualcosa è andato storto","Errore Modifica Prenotazione");
+                    Logger.getLogger(LoginGUI.class.getName()).log(Level.SEVERE, "ERRORE: Modifica Prenotazione", ex);
                 }
             }
         });

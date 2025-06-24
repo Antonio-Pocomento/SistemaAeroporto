@@ -27,9 +27,9 @@ public class Passeggero {
     }
     public ArrayList<Bagaglio> getBagagli() {return Bagagli;}
 
-    public Bagaglio getBagaglio(int codiceBagaglio){
+    public Bagaglio getBagaglio(String codiceBagaglio){
         for(Bagaglio b : Bagagli){
-            if(b.getCodice() == codiceBagaglio){return b;}
+            if(b.getCodice().equals(codiceBagaglio)){return b;}
         }
         return null;
     }

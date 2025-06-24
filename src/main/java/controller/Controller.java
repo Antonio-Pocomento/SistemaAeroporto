@@ -1,10 +1,13 @@
 package controller;
 
 import custom_exceptions.EmailAlreadyExistsException;
+import custom_exceptions.ModifyTableException;
 import custom_exceptions.UserAlreadyExistsException;
 import custom_exceptions.UserNotFoundException;
 import dao.UtenteDAO;
 import dao.AmministratoreDAO;
+import dao.UtenteGenericoDAO;
+import implementazioni_postgres_dao.UtenteGenericoImplementazionePostgresDAO;
 import implementazioni_postgres_dao.UtenteImplementazionePostgresDAO;
 import implementazioni_postgres_dao.AmministratoreImplementazionePostgresDAO;
 import model.*;
@@ -15,12 +18,17 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Controller {
 
     private Utente utenteAutenticato;
     AmministratoreDAO amministratoreDAO = new AmministratoreImplementazionePostgresDAO();
+    UtenteGenericoDAO utenteGenericoDAO = new UtenteGenericoImplementazionePostgresDAO();
+    String codiceVoloDaPrenotare;
+
     String[] flightColumnNames = {
             "Codice", "Posti Disponibili", "Comp. Aerea", "Origine",
             "Destinazione", "Data", "Orario", "Ritardo", "Stato", "Numero Gate"
@@ -31,139 +39,69 @@ public class Controller {
             return column != 0;
         }
     };
-
-    DefaultTableModel flightsTableModel = new DefaultTableModel(
-                new Object[][] {
-                        {false, "AZ123", "1200", "ITALIAN AIRLINES", "Palermo", "Napoli", "12/04/2020", "12:55", "00:00", "Programmato", "1"},
-                        {false, "LH456", "500", "Voli Italia", "Napoli", "Torino", "13/04/2020", "15:52", "00:30", "Programmato", "6"},
-                        {false, "BA789", "999", "Italico", "Napoli", "Palermo", "11/04/2020", "10:34", "01:00", "Programmato", "2"},
-                        {false, "LH456", "500", "Voli Italia", "Napoli", "Torino", "13/04/2020", "15:52", "00:30", "Programmato", "6"},
-                        {false, "BA789", "999", "Italico", "Napoli", "Palermo", "11/04/2020", "10:34", "01:00", "Programmato", "2"},
-                        {false, "LH456", "500", "Voli Italia", "Napoli", "Torino", "13/04/2020", "15:52", "00:30", "Programmato", "6"},
-                        {false, "BA789", "999", "Italico", "Napoli", "Palermo", "11/04/2020", "10:34", "01:00", "Programmato", "2"},
-                        {false, "LH456", "500", "Voli Italia", "Napoli", "Torino", "13/04/2020", "15:52", "00:30", "Programmato", "6"},
-                        {false, "BA789", "999", "Italico", "Napoli", "Palermo", "11/04/2020", "10:34", "01:00", "Programmato", "2"},
-                        {false, "LH456", "500", "Voli Italia", "Napoli", "Torino", "13/04/2020", "15:52", "00:30", "Programmato", "6"},
-                        {false, "BA789", "999", "Italico", "Napoli", "Palermo", "11/04/2020", "10:34", "01:00", "Programmato", "2"},
-                        {false, "LH456", "500", "Voli Italia", "Napoli", "Torino", "13/04/2020", "15:52", "00:30", "Programmato", "6"},
-                        {false, "BA789", "999", "Italico", "Napoli", "Palermo", "11/04/2020", "10:34", "01:00", "Programmato", "2"},
-                        {false, "LH456", "500", "Voli Italia", "Napoli", "Torino", "13/04/2020", "15:52", "00:30", "Programmato", "6"},
-                        {false, "BA789", "999", "Italico", "Napoli", "Palermo", "11/04/2020", "10:34", "01:00", "Programmato", "2"},
-                        {false, "LH456", "500", "Voli Italia", "Napoli", "Torino", "13/04/2020", "15:52", "00:30", "Programmato", "6"},
-                        {false, "BA789", "999", "Italico", "Napoli", "Palermo", "11/04/2020", "10:34", "01:00", "Programmato", "2"},
-                        {false, "LH456", "500", "Voli Italia", "Napoli", "Torino", "13/04/2020", "15:52", "00:30", "Programmato", "6"},
-                        {false, "BA789", "999", "Italico", "Napoli", "Palermo", "11/04/2020", "10:34", "01:00", "Programmato", "2"},
-                        {false, "LH456", "500", "Voli Italia", "Napoli", "Torino", "13/04/2020", "15:52", "00:30", "Programmato", "6"},
-                        {false, "BA789", "999", "Italico", "Napoli", "Palermo", "11/04/2020", "10:34", "01:00", "Programmato", "2"},
-                        {false, "LH456", "500", "Voli Italia", "Napoli", "Torino", "13/04/2020", "15:52", "00:30", "Programmato", "6"},
-                        {false, "BA789", "999", "Italico", "Napoli", "Palermo", "11/04/2020", "10:34", "01:00", "Programmato", "2"},
-                        {false, "LH456", "500", "Voli Italia", "Napoli", "Torino", "13/04/2020", "15:52", "00:30", "Programmato", "6"},
-                        {false, "BA789", "999", "Italico", "Napoli", "Palermo", "11/04/2020", "10:34", "01:00", "Programmato", "2"},
-                        {false, "LH456", "500", "Voli Italia", "Napoli", "Torino", "13/04/2020", "15:52", "00:30", "Programmato", "6"},
-                        {false, "BA789", "999", "Italico", "Napoli", "Palermo", "11/04/2020", "10:34", "01:00", "Programmato", "2"},
-                        {false, "LH456", "500", "Voli Italia", "Napoli", "Torino", "13/04/2020", "15:52", "00:30", "Programmato", "6"},
-                        {false, "BA789", "999", "Italico", "Napoli", "Palermo", "11/04/2020", "10:34", "01:00", "Programmato", "2"},
-                        {false, "LH456", "500", "Voli Italia", "Napoli", "Torino", "13/04/2020", "15:52", "00:30", "Programmato", "6"},
-                        {false, "BA789", "999", "Italico", "Napoli", "Palermo", "11/04/2020", "10:34", "01:00", "Programmato", "2"},
-    },
-            new Object[] {"Prenota", "Codice", "Posti Disp.", "Compagnia Aerea", "Aer. Di Partenza", "Aer. Di Arrivo",
-            "Data", "Ora", "Ritardo", "Stato", "Gate"}
-        ) {
-        @Override
-        public Class<?> getColumnClass(int columnIndex) {
-            return columnIndex == 0 ? Boolean.class : String.class;
-        }
-
-        @Override
-        public boolean isCellEditable(int row, int column) {
-            return column == 0;
-        }
-    };
-
-    DefaultTableModel bagsTableModel = new DefaultTableModel(
-            new Object[][] {
-                    {false, "BG123", "Caricato"},
-                    {false, "BG456", "Ritirabile"},
-                    {false, "BG789", "Ritirabile"},
-            },
-            new Object[] {"Segnala", "Codice", "Stato"}
-    ) {
-        @Override
-        public Class<?> getColumnClass(int columnIndex) {
-            return columnIndex == 0 ? Boolean.class : String.class;
-        }
-
-        @Override
-        public boolean isCellEditable(int row, int column) {
-            return column == 0;
-        }
-    };
-
-    DefaultTableModel bagsAdminTableModel = new DefaultTableModel(
-            new Object[][] {
-                    {false, "BG123", "Caricato"},
-                    {false, "BG456", "Ritirabile"},
-                    {false, "BG789", "Ritirabile"},
-                    {false, "BG123", "Caricato"},
-                    {false, "BG456", "Ritirabile"},
-                    {false, "BG789", "Ritirabile"},
-                    {false, "BG123", "Caricato"},
-                    {false, "BG456", "Ritirabile"},
-                    {false, "BG789", "Ritirabile"},
-                    {false, "BG456", "Ritirabile"},
-                    {false, "BG789", "Ritirabile"},
-
-            },
-            new Object[] {"Modifica", "Codice", "Stato"}
-    ) {
-        @Override
-        public Class<?> getColumnClass(int columnIndex) {
-            return columnIndex == 0 ? Boolean.class : String.class;
-        }
-
-        @Override
-        public boolean isCellEditable(int row, int column) {
-            return column == 0;
-        }
-    };
-
-    DefaultTableModel bookingTableModel = new DefaultTableModel(
-            new Object[][] {
-                    {"AZ123", "A","In Attesa"},
-                    {"AZ132", "A","In Attesa"},
-                    {"AZ125", "A","In Attesa"},
-                    {"AZ123", "A","In Attesa"},
-                    {"AZ132", "A","In Attesa"},
-                    {"AZ125", "A","In Attesa"},
-                    {"AZ123", "A","In Attesa"},
-                    {"AZ132", "A","In Attesa"},
-                    {"AZ125", "A", "In Attesa"},
-            },
-            new Object[] {"Codice Volo", "Nome Passeggero", "Stato Prenotazione"}
-    ) {
-        @Override
-        public Class<?> getColumnClass(int columnIndex) {
-            return String.class;
-        }
-
+    DefaultTableModel flightsTableModel = new DefaultTableModel(flightColumnNames, 0) {
         @Override
         public boolean isCellEditable(int row, int column) {
             return false;
         }
     };
 
+    String[] bookingColumnNames = {
+            "Numero Biglietto", "Posto Assegnato", "Nome Passeggero", "Codice Volo",
+            "Stato"
+    };
+    DefaultTableModel bookingTableModel = new DefaultTableModel(bookingColumnNames, 0) {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+    };
 
+    String[] luggageColumnNames = {
+            "Codice", "Tipo", "Codice Fiscale Passeggero", "Stato"
+    };
+    DefaultTableModel luggageAdminTableModel = new DefaultTableModel(luggageColumnNames, 0) {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+    };
+    DefaultTableModel luggageTableModel = new DefaultTableModel(luggageColumnNames, 0) {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+    };
 
-    public DefaultTableModel getFlightsModel() { return null; }
-    public DefaultTableModel getFlightsAdmin() {
+    public DefaultTableModel getFlightsModel() {
+        try{
+        utenteGenericoDAO.showFlights(flightsTableModel);
+        return flightsTableModel;
+        } catch (SQLException ex) {return null;}
+    }
+    public DefaultTableModel getFlightsAdminModel() {
         try{
         amministratoreDAO.showFlights(flightsAdminTableModel,(Amministratore) utenteAutenticato);
         return flightsAdminTableModel;
         } catch (SQLException ex) {return null;}
     }
-    public DefaultTableModel getBagsTableModel() { return bagsTableModel; }
-    public DefaultTableModel getBagsAdminTableModel() { return bagsAdminTableModel; }
-    public DefaultTableModel getBookingTableModel() { return bookingTableModel; }
+    public DefaultTableModel getBagsTableModel() {
+        try{
+        utenteGenericoDAO.showLuggage(luggageTableModel, (UtenteGenerico) utenteAutenticato);
+        return luggageTableModel;
+        } catch (SQLException ex) {return null;}
+    }
+    public DefaultTableModel getBagsAdminTableModel() {
+        try{
+        amministratoreDAO.showLuggage(luggageAdminTableModel, (Amministratore) utenteAutenticato);
+        return luggageAdminTableModel;
+        } catch (SQLException ex) {return null;}}
+    public DefaultTableModel getBookingTableModel() {
+        try{
+        utenteGenericoDAO.showReservations(bookingTableModel,(UtenteGenerico) utenteAutenticato);
+        return bookingTableModel;
+        } catch (SQLException ex) {return null;}
+    }
 
     public void registraUtente(String nomeUtente, String email, char[] password) throws SQLException {
         UtenteDAO rDAO = new UtenteImplementazionePostgresDAO();
@@ -181,49 +119,116 @@ public class Controller {
     public int loginUtente(String login, char[] password) throws SQLException {
         UtenteDAO rDAO = new UtenteImplementazionePostgresDAO();
         Utente utente = rDAO.loginUtente(login, new String(password).trim());
-        if(utente != null) { utenteAutenticato = utente; }
+        if(utente == null) throw new UserNotFoundException("Utente non trovato");
 
+        utenteAutenticato = utente;
         if (utente instanceof Amministratore amministratore) {
             amministratoreDAO.addFlights(amministratore);
             return 1;
         } else if (utente instanceof UtenteGenerico) {
             return 0;
-        } else {
-            throw new UserNotFoundException("Utente non trovato");
+        }
+        else throw new UserNotFoundException("Utente non trovato");
+    }
+
+    public void inserisciVolo(String codice, String posti, String compagnia, String aeroportoOrigine, String aeroportoDestinazione,
+                              String data, String orario, String numeroGate) throws SQLException {
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        Volo volo = new Volo(codice,safeParseInteger(posti),safeParseInteger(posti),compagnia,aeroportoOrigine,aeroportoDestinazione,LocalDate.parse(data, dateFormatter),
+                safeParseLocalTime(orario),null,StatoVolo.PROGRAMMATO,safeParseInteger(numeroGate));
+        Amministratore admin = (Amministratore) utenteAutenticato;
+        admin.gestisciVolo(volo);
+        amministratoreDAO.inserisciVolo(volo,admin);
+    }
+
+    public void iniziaPrenotazione(String codiceVolo){
+        codiceVoloDaPrenotare = codiceVolo;
+    }
+
+    public void confermaPrenotazione(String nome, String secNome, String cognome, String cf, JTable table) throws SQLException {
+        List<String> tipiBagagli = new ArrayList<>();
+
+        for (int i = 0; i < table.getRowCount(); i++) {
+            Object value = table.getValueAt(i, 0);
+            if (value != null) {
+                tipiBagagli.add(value.toString());
+            }
+        }
+        utenteGenericoDAO.confirmReservation(nome,secNome,cognome,cf,tipiBagagli,(UtenteGenerico) utenteAutenticato, codiceVoloDaPrenotare);
+    }
+
+    public void salvaModificheDaTabella(JTable table) throws ModifyTableException {
+        try {
+            DefaultTableModel model = (DefaultTableModel) table.getModel();
+            Amministratore admin = (Amministratore) utenteAutenticato;
+            List<Volo> voliGestiti = admin.getVoliGestiti();
+
+            for (int i = 0; i < model.getRowCount(); i++) {
+                String codice = model.getValueAt(i, 0).toString();
+                Volo v;
+                for (Volo volo : voliGestiti) {
+                    v = volo;
+                    if (Objects.equals(v.getCodice(), codice)) {
+                        // aggiorna i campi del volo esistente
+                        // todo aggiungere altro
+                        admin.modificaPostiVolo(v,safeParseInteger(model.getValueAt(i, 1).toString()));
+                        admin.modificaDataVolo(v,LocalDate.parse(model.getValueAt(i, 5).toString(), DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                        admin.modificaOrarioVolo(v,LocalTime.parse(model.getValueAt(i, 6).toString()));
+                        admin.modificaRitardoVolo(v,safeParseLocalTime(model.getValueAt(i, 7)));
+                        admin.modificaStatoVolo(v,StatoVolo.valueOf(model.getValueAt(i, 8).toString().replace(" ", "_").toUpperCase()));
+                        admin.modificaNumeroGateVolo(v,safeParseInteger(model.getValueAt(i, 9).toString()));
+
+                        amministratoreDAO.aggiornaVolo(v);
+                        break;
+                    }
+                }
+            }
+        }
+        catch (Exception ex) {
+            throw new ModifyTableException(ex.getMessage());
         }
     }
 
-    public void salvaModificheDaTabella(JTable table) throws SQLException {
-        DefaultTableModel model = (DefaultTableModel) table.getModel();
-        Amministratore admin = (Amministratore) utenteAutenticato;
-        List<Volo> voli = admin.getVoliGestiti();
+    public void modificaBagaglio(String codice, String nuovoStato) throws SQLException{
+        amministratoreDAO.aggiornaStatoBagaglio(codice,nuovoStato);
+    }
 
-        for (int i = 0; i < model.getRowCount(); i++) {
-            int codice = safeParseInteger(model.getValueAt(i, 0));
-            Volo v = null;
-            for (Volo volo : voli) {
-                v = volo;
-                if (v.getCodice() == codice) {
-                    // aggiorna i campi del volo esistente
-                    v.setData(LocalDate.parse(model.getValueAt(i, 5).toString(), DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-                    v.setOrario(LocalTime.parse(model.getValueAt(i, 6).toString()));
-                    v.setRitardo(parseLocalTimeSafe(model.getValueAt(i, 7)));
-                    v.setStato(StatoVolo.valueOf(model.getValueAt(i, 8).toString().replace(" ", "_").toUpperCase()));
-                    v.setNumeroGate(null);
+    public void modificaPrenotazione(int numeroBiglietto, String stato) throws SQLException{
+        utenteGenericoDAO.modificaPrenotazione(numeroBiglietto, stato);
+    }
 
-                    amministratoreDAO.aggiornaVolo(v); // salvi lo stesso oggetto aggiornato
-                    break;
-                }
-            }
-            amministratoreDAO.aggiornaVolo(v);
+    public void segnalaBagaglio(String codice) throws SQLException{
+        utenteGenericoDAO.segnalaBagaglio(codice);
+    }
 
-            for (int j = 0; j < voli.size(); j++) {
-                if (voli.get(j).getCodice() == codice) {
-                    voli.set(j, v);
-                    break;
-                }
-            }
-        }
+    public DefaultTableModel cercaVoloAdmin(String codice, String posti, String compagnia, String aeroportoOrigine, String aeroportoDestinazione,
+                                       String data, String orario, String ritardo, String stato, String numeroGate) throws SQLException {
+        amministratoreDAO.ricercaVolo(flightsAdminTableModel,(Amministratore) utenteAutenticato, codice, posti,compagnia,
+                aeroportoOrigine,aeroportoDestinazione,data,orario,ritardo,stato,numeroGate);
+        return flightsAdminTableModel;
+    }
+
+    public DefaultTableModel cercaVolo(String codice, String posti, String compagnia, String aeroportoOrigine, String aeroportoDestinazione,
+                                            String data, String orario, String ritardo, String stato, String numeroGate) throws SQLException {
+        utenteGenericoDAO.ricercaVolo(flightsTableModel, codice, posti,compagnia,
+                aeroportoOrigine,aeroportoDestinazione,data,orario,ritardo,stato,numeroGate);
+        return flightsTableModel;
+    }
+
+    public DefaultTableModel cercaBagaglioAdmin(String codice, String tipo, String stato) throws SQLException {
+        amministratoreDAO.searchLuggage(luggageAdminTableModel, (Amministratore) utenteAutenticato,codice, tipo, stato);
+        return luggageAdminTableModel;
+    }
+
+    public DefaultTableModel cercaBagaglio(String codice, String tipo, String stato) throws SQLException {
+        utenteGenericoDAO.searchLuggage(luggageTableModel, (UtenteGenerico) utenteAutenticato,codice, tipo, stato);
+        return luggageTableModel;
+    }
+
+    public DefaultTableModel cercaPrenotazione(String codiceVolo, String nomePasseggero) throws SQLException {
+        utenteGenericoDAO.ricercaPrenotazione(bookingTableModel, (UtenteGenerico) utenteAutenticato, codiceVolo, nomePasseggero);
+        return bookingTableModel;
     }
 
     public boolean canPressRegister(String nomeUtente, String email, char[] password, char[] confirmPassword) {
@@ -233,9 +238,6 @@ public class Controller {
     public boolean isEmailValid(String email) {
         String regexEmail = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
         return email != null && !email.isBlank() && email.matches(regexEmail);
-    }
-    public boolean isPasswordValid(String password) {
-        return password != null && !password.isBlank() && password.length() >= 8;
     }
     private boolean isPasswordValid(String password, String confirmPassword) {
         return password != null && !password.isBlank() && password.length() >= 8 && password.equals(confirmPassword);
@@ -249,13 +251,13 @@ public class Controller {
             try {
                 return Integer.parseInt(value.toString());
             } catch (NumberFormatException e) {
-                System.err.println("Valore numerico non valido: " + value);
+                return null;
             }
         }
         return null;
     }
 
-    private LocalTime parseLocalTimeSafe(Object value) {
+    private LocalTime safeParseLocalTime(Object value) {
         if (value == null) return null;
         String s = value.toString();
         if (s.isBlank()) return null;

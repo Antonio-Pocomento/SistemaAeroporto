@@ -2,13 +2,16 @@ package gui;
 
 import controller.Controller;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
-import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class InserisciVoloGUI {
     private JPanel insertFlightPanel;
@@ -24,31 +27,33 @@ public class InserisciVoloGUI {
     private JButton insertButton;
     private JButton returnButton;
     private JPanel fieldsPanel;
-    public JFrame frame;
+    public final JFrame frame = new JFrame("Inserisci Volo");
+    private static final String DEFAULT_CODEFIELD_TEXT = "Codice Volo";
+    private static final String DEFAULT_AERARRIVOFIELD_TEXT = "Aeroporto Di Arrivo";
+    private static final String DEFAULT_AERORIGINEFIELD_TEXT = "Aeroporto Di Origine";
+    private static final String DEFAULT_DATEFIELD_TEXT = "Data Volo (DD/MM/YYYY)";
+    private static final String DEFAULT_TIMEFIELD_TEXT = "Orario Volo (HH:MM)";
+    private static final String DEFAULT_COMPANYFIELD_TEXT = "Compagnia Aerea";
+    private static final String DEFAULT_SEATFIELD_TEXT = "Posti";
+    private static final String DEFAULT_GATEFIELD_TEXT = "Numero Gate";
 
-    public InserisciVoloGUI(Frame frameChiamante, Controller controller) throws IOException {
-        frame = new JFrame("Login");
-        frame.setContentPane(insertFlightPanel);
-
-        insertFlightPanel.setLayout(new OverlayLayout(insertFlightPanel));
-        contentPanel.setOpaque(false);
-        insertFlightPanel.add(contentPanel);
-        insertFlightPanel.add(new BasicBackgroundPanel(ImageIO.read(new File("src/main/images/simpleBackground.jpg"))));
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setLocationRelativeTo(null);
-        frame.pack();
-        frame.setExtendedState(Frame.MAXIMIZED_BOTH);
-        frame.setVisible(true);
+    public InserisciVoloGUI(Frame frameChiamante, Controller controller) {
+        UtilFunctionsForGUI.setupLayoutAndBackground(frame,insertFlightPanel);
 
         insertButton.setBorder(new LineBorder(Color.black,3));
         returnButton.setBorder(new LineBorder(Color.black,3));
 
-        frame.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowOpened(WindowEvent e) {
-                contentPanel.requestFocusInWindow();
-            }
-        });
+        Map<JTextField, String> fields = new HashMap<>();
+        fields.put(codeField, DEFAULT_CODEFIELD_TEXT);
+        fields.put(aerArrivoField, DEFAULT_AERARRIVOFIELD_TEXT);
+        fields.put(aerOrigineField, DEFAULT_AERORIGINEFIELD_TEXT);
+        fields.put(dateField, DEFAULT_DATEFIELD_TEXT);
+        fields.put(timeField, DEFAULT_TIMEFIELD_TEXT);
+        fields.put(companyField, DEFAULT_COMPANYFIELD_TEXT);
+        fields.put(seatField, DEFAULT_SEATFIELD_TEXT);
+        Set<JTextField> optional = new HashSet<>();
+        optional.add(gateField);
+
         fieldsPanel.setBorder(new LineBorder(Color.black,10));
         aerArrivoField.setBorder(new LineBorder(Color.BLACK,2,false));
         aerOrigineField.setBorder(new LineBorder(Color.BLACK,2,false));
@@ -59,195 +64,37 @@ public class InserisciVoloGUI {
         seatField.setBorder(new LineBorder(Color.BLACK,2,false));
         codeField.setBorder(new LineBorder(Color.BLACK,2,false));
 
-        codeField.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                super.focusGained(e);
-                if(codeField.getText().equals("Codice Volo")) {
-                    codeField.setForeground(Color.black);
-                    codeField.setText("");
-                }
-            }
+        UtilFunctionsForGUI.addTextFieldPlaceholder(codeField, DEFAULT_CODEFIELD_TEXT);
+        UtilFunctionsForGUI.addTextFieldPlaceholder(aerArrivoField, DEFAULT_AERARRIVOFIELD_TEXT);
+        UtilFunctionsForGUI.addTextFieldPlaceholder(aerOrigineField, DEFAULT_AERORIGINEFIELD_TEXT);
+        UtilFunctionsForGUI.addTextFieldPlaceholder(dateField, DEFAULT_DATEFIELD_TEXT);
+        UtilFunctionsForGUI.addTextFieldPlaceholder(timeField, DEFAULT_TIMEFIELD_TEXT);
+        UtilFunctionsForGUI.addTextFieldPlaceholder(companyField, DEFAULT_COMPANYFIELD_TEXT);
+        UtilFunctionsForGUI.addTextFieldPlaceholder(gateField, DEFAULT_GATEFIELD_TEXT);
+        UtilFunctionsForGUI.addTextFieldPlaceholder(seatField, DEFAULT_SEATFIELD_TEXT);
+        UtilFunctionsForGUI.addHoverEffect(insertButton);
+        UtilFunctionsForGUI.addHoverEffect(returnButton);
 
-            @Override
-            public void focusLost(FocusEvent e) {
-                super.focusLost(e);
-                if(codeField.getText().isEmpty()) {
-                    codeField.setForeground(Color.gray);
-                    codeField.setText("Codice Volo");
-                }
-            }
-        });
-        aerOrigineField.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                super.focusGained(e);
-                if(aerOrigineField.getText().equals("Aeroporto Di Origine")) {
-                    aerOrigineField.setForeground(Color.black);
-                    aerOrigineField.setText("");
-                }
-            }
+        FormHelper.bindButtonToTextFields(insertButton,fields,optional);
+        UtilFunctionsForGUI.setupFrame(frame);
 
+        frame.addWindowListener(new WindowAdapter() {
             @Override
-            public void focusLost(FocusEvent e) {
-                super.focusLost(e);
-                if(aerOrigineField.getText().isEmpty()) {
-                    aerOrigineField.setForeground(Color.gray);
-                    aerOrigineField.setText("Aeroporto Di Origine");
-                }
+            public void windowOpened(WindowEvent e) {
+                contentPanel.requestFocusInWindow();
             }
         });
-        aerArrivoField.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                super.focusGained(e);
-                if(aerArrivoField.getText().equals("Aeroporto Di Arrivo")) {
-                    aerArrivoField.setForeground(Color.black);
-                    aerArrivoField.setText("");
-                }
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-                super.focusLost(e);
-                if(aerArrivoField.getText().isEmpty()) {
-                    aerArrivoField.setForeground(Color.gray);
-                    aerArrivoField.setText("Aeroporto Di Arrivo");
-                }
-            }
+        returnButton.addActionListener(_ -> {
+            frameChiamante.setVisible(true);
+            frame.dispose();
         });
-        dateField.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                super.focusGained(e);
-                if(dateField.getText().equals("Data Volo (DD/MM/YYYY)")) {
-                    dateField.setForeground(Color.black);
-                    dateField.setText("");
-                }
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-                super.focusLost(e);
-                if(dateField.getText().isEmpty()) {
-                    dateField.setForeground(Color.gray);
-                    dateField.setText("Data Volo (DD/MM/YYYY)"); // TODO Controllare che sia effettivamente DD/MM
-                }
-            }
-        });
-        timeField.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                super.focusGained(e);
-                if(timeField.getText().equals("Orario Volo (HH:MM)")) {
-                    timeField.setForeground(Color.black);
-                    timeField.setText("");
-                }
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-                super.focusLost(e);
-                if(timeField.getText().isEmpty()) {
-                    timeField.setForeground(Color.gray);
-                    timeField.setText("Orario Volo (HH:MM)");
-                }
-            }
-        });
-        companyField.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                super.focusGained(e);
-                if(companyField.getText().equals("Compagnia Aerea")) {
-                    companyField.setForeground(Color.black);
-                    companyField.setText("");
-                }
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-                super.focusLost(e);
-                if(companyField.getText().isEmpty()) {
-                    companyField.setForeground(Color.gray);
-                    companyField.setText("Compagnia Aerea");
-                }
-            }
-        });
-        seatField.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                super.focusGained(e);
-                if(seatField.getText().equals("Posti")) {
-                    seatField.setForeground(Color.black);
-                    seatField.setText("");
-                }
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-                super.focusLost(e);
-                if(seatField.getText().isEmpty()) {
-                    seatField.setForeground(Color.gray);
-                    seatField.setText("Posti");
-                }
-            }
-        });
-        gateField.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                super.focusGained(e);
-                if(gateField.getText().equals("Numero Gate")) {
-                    gateField.setForeground(Color.black);
-                    gateField.setText("");
-                }
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-                super.focusLost(e);
-                if(gateField.getText().isEmpty()) {
-                    gateField.setForeground(Color.gray);
-                    gateField.setText("Numero Gate");
-                }
-            }
-        });
-        returnButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                frameChiamante.setVisible(true);
-                frame.dispose();
-            }
-        });
-        insertButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // TODO DATABASE
-            }
-        });
-        insertButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                super.mouseEntered(e);
-                insertButton.setBackground(Color.lightGray);
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                super.mouseExited(e);
-                insertButton.setBackground(null);
-            }
-        });
-        returnButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                super.mouseEntered(e);
-                returnButton.setBackground(Color.lightGray);
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                super.mouseExited(e);
-                returnButton.setBackground(null);
+        insertButton.addActionListener(_ -> {
+            try {
+                controller.inserisciVolo(codeField.getText().trim(),seatField.getText().trim(),companyField.getText().trim(),aerOrigineField.getText().trim(),
+                        aerArrivoField.getText().trim(),dateField.getText().trim(),timeField.getText().trim(),gateField.getText().trim());
+            } catch (Exception ex) {
+                ErrorPanel.showErrorDialog(null,"Qualcosa è andato storto","Errore Inserimento");
+                Logger.getLogger(LoginGUI.class.getName()).log(Level.SEVERE, "Errore Inserimento Volo", ex);
             }
         });
     }

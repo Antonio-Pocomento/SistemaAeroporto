@@ -2,23 +2,13 @@ package gui;
 
 import controller.Controller;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableColumnModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.IOException;
 
 public class VoliGUI {
-    public JFrame frame;
+    public final JFrame frame = new JFrame("Voli");
     private JPanel voliPanel;
-    private JPanel contentPanel;
     private JButton prenotaButton;
     private JScrollPane tablePanel;
     private JTable table1;
@@ -26,111 +16,39 @@ public class VoliGUI {
     private JButton searchButton;
     private JPanel tableBackgroundPanel;
 
-    VoliGUI(Frame frameChiamante, Controller controller) throws IOException {
-        frame = new JFrame("Voli");
-        frame.setContentPane(voliPanel);
-        voliPanel.setLayout(new OverlayLayout(voliPanel));
-        contentPanel.setOpaque(false);
-
+    VoliGUI(Frame frameChiamante, Controller controller) {
+        UtilFunctionsForGUI.setupLayoutAndBackground(frame,voliPanel);
         prenotaButton.setBorder(new LineBorder(Color.black,3,false));
         returnButton.setBorder(new LineBorder(Color.black,3,false));
         searchButton.setBorder(new LineBorder(Color.black,3,false));
-        tableBackgroundPanel.setBorder(new LineBorder(Color.black,10,false));
+        TableSetter.setupFlightTable(table1, tablePanel, tableBackgroundPanel, controller.getFlightsModel(),10);
+        UtilFunctionsForGUI.addHoverEffect(searchButton);
+        UtilFunctionsForGUI.addHoverEffect(returnButton);
+        UtilFunctionsForGUI.addHoverEffect(prenotaButton);
+        table1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        prenotaButton.setEnabled(false);
+        UtilFunctionsForGUI.setupFrame(frame);
 
-
-        table1.setModel(controller.getFlightsModel());
-        table1.getTableHeader().setReorderingAllowed(false);
-        table1.getTableHeader().setResizingAllowed(false);
-        table1.getTableHeader().setFont(new Font("Times New Roman", Font.PLAIN, 28));
-        tablePanel.setViewportView(table1);
-        tablePanel.setPreferredSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize().width-100, (Math.min(table1.getRowCount(), 20)+1) * table1.getRowHeight()));
-        table1.setOpaque(false);
-        tablePanel.setOpaque(false);
-        tablePanel.getViewport().setOpaque(false);
-
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-
-        TableColumnModel columnModel = table1.getColumnModel();
-        for (int i = 1; i < columnModel.getColumnCount(); i++) {
-            columnModel.getColumn(i).setCellRenderer(centerRenderer);
-        }
-
-
-        voliPanel.add(new BasicBackgroundPanel(ImageIO.read(new File("src/main/images/simpleBackground.jpg"))));
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLocationRelativeTo(null);
-        frame.pack();
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        frame.setVisible(true);
-        prenotaButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                CheckInGUI checkGUI = null;
-                try {
-                    checkGUI = new CheckInGUI(frame, controller);
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
-                checkGUI.frame.setVisible(true);
-            }
+        prenotaButton.addActionListener(_ -> {
+            CheckInGUI checkGUI = new CheckInGUI(frame, controller);
+            controller.iniziaPrenotazione((String) table1.getValueAt(table1.getSelectedRow(), 0));
+            checkGUI.frame.setVisible(true);
+            frame.setVisible(false);
         });
-        searchButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                CercaVoloGUI cercGUI = null;
-                try {
-                    cercGUI = new CercaVoloGUI(frame, controller);
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
-                cercGUI.frame.setVisible(true);
-            }
+        searchButton.addActionListener(_ -> {
+            CercaVoloGUI cercaGUI = new CercaVoloGUI(frame, controller);
+            cercaGUI.frame.setVisible(true);
+            frame.setVisible(false);
         });
-        returnButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                frameChiamante.setVisible(true);
-                frame.dispose();
-            }
+        returnButton.addActionListener(_ -> {
+            frameChiamante.setVisible(true);
+            frame.dispose();
         });
-        searchButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                super.mouseEntered(e);
-                searchButton.setBackground(Color.lightGray);
-            }
 
-            @Override
-            public void mouseExited(MouseEvent e) {
-                super.mouseExited(e);
-                searchButton.setBackground(null);
-            }
-        });
-        prenotaButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                super.mouseEntered(e);
-                prenotaButton.setBackground(Color.lightGray);
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                super.mouseExited(e);
-                prenotaButton.setBackground(null);
-            }
-        });
-        returnButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                super.mouseEntered(e);
-                returnButton.setBackground(Color.lightGray);
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                super.mouseExited(e);
-                returnButton.setBackground(null);
+        table1.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) { // Per evitare eventi multipli
+                int selectedRow = table1.getSelectedRow();
+                prenotaButton.setEnabled(selectedRow != -1);
             }
         });
     }

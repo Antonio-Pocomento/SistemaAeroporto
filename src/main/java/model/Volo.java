@@ -2,11 +2,11 @@ package model;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Volo {
-    private int codice;
+    private String codice;
     private int nPosti;
     private int postiDisponibili;
     private String compagniaAerea;
@@ -17,10 +17,9 @@ public class Volo {
     private LocalTime ritardo;
     private StatoVolo stato;
     private Integer numeroGate;
-
     private ArrayList<Prenotazione> prenotazioni = new ArrayList<Prenotazione>();
 
-    public Volo(int codice, int nPosti, int postiDisponibili, String compagniaAerea, String aeroportoOrigine, String aeroportoDestinazione, LocalDate data,
+    public Volo(String codice, int nPosti, int postiDisponibili, String compagniaAerea, String aeroportoOrigine, String aeroportoDestinazione, LocalDate data,
                 LocalTime orario, LocalTime ritardo, StatoVolo stato, Integer numeroGate) {
         this.codice = codice;
         this.nPosti = nPosti;
@@ -36,7 +35,7 @@ public class Volo {
     }
 
     /// /// GETTERs
-    public int getCodice() {return codice;}
+    public String getCodice() {return codice;}
     public int getNPosti() {return nPosti;}
     public int getPostiDisponibili() {return postiDisponibili;}
     public String getCompagniaAerea() {return compagniaAerea;}
@@ -47,7 +46,7 @@ public class Volo {
     public LocalTime getRitardo() {return ritardo;}
     public StatoVolo getStato() {return stato;}
     public Integer getNumeroGate() {return numeroGate;}
-    public ArrayList<Prenotazione> getPrenotazioni() {return prenotazioni;}
+    public List<Prenotazione> getPrenotazioni() {return prenotazioni;}
     public Prenotazione getPrenotazione(int numeroBiglietto){
         for(Prenotazione prenotazione : prenotazioni)
             if(prenotazione.getNumeroBiglietto() == numeroBiglietto) return prenotazione;
@@ -62,12 +61,13 @@ public class Volo {
     }
 
     /// /// SETTERs
-    public void setCodice(int codice) {this.codice = codice;}
+    //public void setCodice(String codice) {this.codice = codice;}
     public void setData(LocalDate data) {this.data = data;}
     public void setOrario(LocalTime orario) {this.orario = orario;}
     public void setRitardo(LocalTime ritardo) {this.ritardo = ritardo;}
     public void setStato(StatoVolo stato) {this.stato = stato;}
     public void setNumeroGate(Integer numeroGate) {this.numeroGate = numeroGate;}
+    public void setPostiDisponibili(int posti) {this.postiDisponibili = posti;}
     /// ///
 
 }

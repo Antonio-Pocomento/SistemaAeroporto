@@ -13,7 +13,9 @@
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
-        <properties/>
+        <properties>
+          <opaque value="false"/>
+        </properties>
         <border type="none"/>
         <children>
           <component id="b596d" class="javax.swing.JButton" binding="tornaIndietroButton" default-binding="true">
@@ -105,7 +107,7 @@
                 </properties>
                 <border type="none"/>
                 <children>
-                  <component id="994d" class="javax.swing.JComboBox" binding="comboBox2" default-binding="true">
+                  <component id="994d" class="javax.swing.JComboBox" binding="stateBox">
                     <constraints>
                       <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="0" fill="0" indent="0" use-parent-layout="false">
                         <preferred-size width="600" height="50"/>
@@ -133,7 +135,7 @@
                 </properties>
                 <border type="none"/>
                 <children>
-                  <component id="b4d80" class="javax.swing.JComboBox" binding="comboBox1" default-binding="true">
+                  <component id="b4d80" class="javax.swing.JComboBox" binding="typeBox">
                     <constraints>
                       <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="0" fill="0" indent="0" use-parent-layout="false">
                         <preferred-size width="600" height="50"/>
@@ -141,6 +143,10 @@
                     </constraints>
                     <properties>
                       <font name="Times New Roman" size="24" style="0"/>
+                      <model>
+                        <item value=""/>
+                        <item value="Zaino"/>
+                      </model>
                     </properties>
                   </component>
                 </children>

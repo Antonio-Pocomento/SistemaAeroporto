@@ -2,18 +2,17 @@ package gui;
 
 import controller.Controller;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
-import java.io.IOException;
+import java.sql.SQLException;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class BagagliGUI {
-    public JFrame frame;
+    public final JFrame frame = new JFrame("Bagagli");
     private JPanel bagagliPanel;
     private JPanel contentPanel;
     private JButton tornaIndietroButton;
@@ -22,119 +21,58 @@ public class BagagliGUI {
     private JButton segnalaSmarrimentoButton;
     private JPanel tableBackgroundPanel;
     private JButton cercaButton;
-    private JComboBox comboBox1;
-    private JComboBox comboBox2;
+    private JComboBox<String> typeBox;
+    private JComboBox<String> stateBox;
     private JTextField codeField;
     private JPanel fieldsPanel;
+    private static final String DEFAULT_CODEFIELD_TEXT = "Codice Bagaglio";
 
-    BagagliGUI(Frame frameChiamante, Controller controller) throws IOException {
-        frame = new JFrame("Voli");
-        frame.setContentPane(bagagliPanel);
-        bagagliPanel.setLayout(new OverlayLayout(bagagliPanel));
-        contentPanel.setOpaque(false);
+    BagagliGUI(Frame frameChiamante, Controller controller) {
+        UtilFunctionsForGUI.setupLayoutAndBackground(frame,bagagliPanel);
 
-        table1.setModel(controller.getBagsAdminTableModel());
-        table1.getTableHeader().setReorderingAllowed(false);
-        table1.getTableHeader().setResizingAllowed(false);
-        table1.getTableHeader().setFont(new Font("Times New Roman", Font.PLAIN, 28));
-        tablePanel.setViewportView(table1);
-        tablePanel.setPreferredSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize().width-100, (Math.min(table1.getRowCount(), 5)+1) * table1.getRowHeight()));
-        table1.setOpaque(false);
-        tablePanel.setOpaque(false);
-        tablePanel.getViewport().setOpaque(false);
-
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-
-        TableColumnModel columnModel = table1.getColumnModel();
-        for (int i = 1; i < columnModel.getColumnCount(); i++) {
-            columnModel.getColumn(i).setCellRenderer(centerRenderer);
-        }
-
-        tablePanel.setPreferredSize(new Dimension(2100,table1.getRowHeight()*Math.min(table1.getRowCount(), 6)));
-        tableBackgroundPanel.setPreferredSize(new Dimension(tablePanel.getPreferredSize().width+100,tablePanel.getPreferredSize().height+100));
-
-        tableBackgroundPanel.setBorder(new LineBorder(Color.BLACK,10));
+        TableSetter.setupLuggageTable(table1,tablePanel, tableBackgroundPanel, controller.getBagsTableModel(), 5);
         fieldsPanel.setBorder(new LineBorder(Color.BLACK,10));
         cercaButton.setBorder(new LineBorder(Color.BLACK,3));
         tornaIndietroButton.setBorder(new LineBorder(Color.BLACK,3));
         segnalaSmarrimentoButton.setBorder(new LineBorder(Color.BLACK,3));
+        typeBox.setBorder(new LineBorder(Color.black,2));
+        stateBox.setBorder(new LineBorder(Color.black,2));
+        codeField.setBorder(new LineBorder(Color.black,2));
 
+        UtilFunctionsForGUI.addHoverEffect(cercaButton);
+        UtilFunctionsForGUI.addHoverEffect(tornaIndietroButton);
+        UtilFunctionsForGUI.addHoverEffect(segnalaSmarrimentoButton);
+        UtilFunctionsForGUI.addTextFieldPlaceholder(codeField,DEFAULT_CODEFIELD_TEXT);
 
-        bagagliPanel.add(new BasicBackgroundPanel(ImageIO.read(new File("src/main/images/simpleBackground.jpg"))));
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLocationRelativeTo(null);
-        frame.pack();
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        frame.setVisible(true);
+        UtilFunctionsForGUI.setupFrame(frame);
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowOpened(WindowEvent e) {
                 contentPanel.requestFocusInWindow();
             }
         });
-        tornaIndietroButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                frameChiamante.setVisible(true);
-                frame.dispose();
+        tornaIndietroButton.addActionListener(_ -> {
+            frameChiamante.setVisible(true);
+            frame.dispose();
+        });
+        cercaButton.addActionListener(_ -> {
+            try {
+                controller.cercaBagaglio(codeField.getText().trim(), Objects.requireNonNull(typeBox.getSelectedItem()).toString().trim(), Objects.requireNonNull(stateBox.getSelectedItem()).toString().trim());
+            } catch (SQLException ex) {
+                ErrorPanel.showErrorDialog(null,"Qualcosa è andato storto","Errore Ricerca Bagaglio");
+                Logger.getLogger(LoginGUI.class.getName()).log(Level.SEVERE, "Errore Ricerca Bagaglio", ex);
             }
         });
-        cercaButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                super.mouseEntered(e);
-                cercaButton.setBackground(Color.lightGray);
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                super.mouseExited(e);
-                cercaButton.setBackground(null);
-            }
-        });
-        segnalaSmarrimentoButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                super.mouseEntered(e);
-                segnalaSmarrimentoButton.setBackground(Color.lightGray);
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                super.mouseExited(e);
-                segnalaSmarrimentoButton.setBackground(null);
-            }
-        });
-        tornaIndietroButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                super.mouseEntered(e);
-                tornaIndietroButton.setBackground(Color.lightGray);
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                super.mouseExited(e);
-                tornaIndietroButton.setBackground(null);
-            }
-        });
-        codeField.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                super.focusGained(e);
-                if(codeField.getText().equals("Codice Bagaglio")){
-                    codeField.setText("");
-                    codeField.setForeground(Color.black);
-                }
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-                super.focusLost(e);
-                if(codeField.getText().equals("")){
-                    codeField.setText("Codice Bagaglio");
-                    codeField.setForeground(Color.gray);
+        segnalaSmarrimentoButton.addActionListener(_ -> {
+            for (int row : table1.getSelectedRows()) {
+                String codice = (String) table1.getValueAt(row, 0);
+                try {
+                    controller.segnalaBagaglio(codice);
+                    TableSetter.setupLuggageTable(table1,tablePanel,tableBackgroundPanel,controller.getBagsTableModel(),5);
+                    controller.cercaBagaglio(codeField.getText().trim(), Objects.requireNonNull(typeBox.getSelectedItem()).toString().trim(), Objects.requireNonNull(stateBox.getSelectedItem()).toString().trim());
+                } catch (SQLException ex) {
+                    ErrorPanel.showErrorDialog(null,"Qualcosa è andato storto","Errore Segnalazione Bagaglio");
+                    Logger.getLogger(LoginGUI.class.getName()).log(Level.SEVERE, "Errore Segnalazione Bagaglio", ex);
                 }
             }
         });

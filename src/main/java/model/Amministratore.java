@@ -16,11 +16,14 @@ public class Amministratore extends Utente {
         return voliGestiti;
     }
 
-    public void modificaCodiceVolo(Volo volo, int codice){
+    /*public void modificaCodiceVolo(Volo volo, String codice){
         volo.setCodice(codice);
-    }
+    }*/
     public void modificaDataVolo(Volo volo, LocalDate data){
         volo.setData(data);
+    }
+    public void modificaPostiVolo(Volo volo, int posti){
+        volo.setPostiDisponibili(posti);
     }
     public void modificaOrarioVolo(Volo volo, LocalTime orario){
         volo.setOrario(orario);
@@ -31,7 +34,7 @@ public class Amministratore extends Utente {
     public void modificaStatoVolo(Volo volo,StatoVolo stato){
         volo.setStato(stato);
     }
-    public void modificaNumeroGateVolo(Volo volo, int numeroGate){
+    public void modificaNumeroGateVolo(Volo volo, Integer numeroGate){
         volo.setNumeroGate(numeroGate);
     }
 

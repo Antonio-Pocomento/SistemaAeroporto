@@ -31,7 +31,7 @@ public class UtenteImplementazionePostgresDAO implements UtenteDAO {
     }
 
     public Utente loginUtente(String login, String passwordInput) throws SQLException {
-        String sql = "SELECT * FROM Utente WHERE (nomeUtente = ? OR email = ?) AND passwordUtente = ?";
+        String sql = "SELECT nomeUtente, email, passwordUtente FROM Utente WHERE (nomeUtente = ? OR email = ?) AND passwordUtente = ?";
         try (Connection conn = ConnessioneDatabase.getInstance().connection;
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, login);

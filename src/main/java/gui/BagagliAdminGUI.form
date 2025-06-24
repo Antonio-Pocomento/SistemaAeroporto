@@ -13,7 +13,9 @@
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
-        <properties/>
+        <properties>
+          <opaque value="false"/>
+        </properties>
         <border type="none"/>
         <children>
           <component id="7a3d9" class="javax.swing.JButton" binding="returnButton">
@@ -66,7 +68,7 @@
               </grid>
             </constraints>
             <properties>
-              <background color="-13947600"/>
+              <background color="-1"/>
               <enabled value="true"/>
               <opaque value="false"/>
             </properties>
@@ -195,6 +197,10 @@
                     <properties>
                       <enabled value="true"/>
                       <font name="Times New Roman" size="24" style="0"/>
+                      <model>
+                        <item value=""/>
+                        <item value="Zaino"/>
+                      </model>
                     </properties>
                   </component>
                 </children>
