@@ -1,23 +1,33 @@
 package model;
 
 public class Bagaglio {
-    private String codice;
+    private final int codice;
     private StatoBagaglio stato;
-    private String tipo;
-    private Passeggero passeggero;
+    private final String tipo;
+    private final Passeggero passeggero;
 
-    public Bagaglio(String codice, Passeggero passeggero, String tipo) {
+    public Bagaglio(int codice, Passeggero passeggero, String tipo) {
         this.codice = codice;
-        this.stato = StatoBagaglio.RITIRABILE;
+        this.stato = StatoBagaglio.CARICATO;
         this.tipo = tipo;
         this.passeggero = passeggero;
     }
 
     public StatoBagaglio getStato(){return stato;}
-    public String getCodice(){return codice;}
+    public int getCodice(){return codice;}
 
     public void setStato(StatoBagaglio stato) {
         this.stato = stato;
-        System.out.println("Stato del bagaglio modificato a: "+stato);
+    }
+
+    public String getCodiceVisualizzato() {
+        // Base36 in maiuscolo
+        return String.format("BAG-%s", Integer.toString(codice, 36).toUpperCase());
+    }
+
+    public String getTipo() {return tipo;}
+
+    public Passeggero getPasseggero() {
+        return passeggero;
     }
 }

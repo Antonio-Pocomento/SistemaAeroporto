@@ -42,6 +42,7 @@ public class BagagliAdminGUI {
         typeBox.setBorder(new LineBorder(Color.black,2));
         codeField.setBorder(new LineBorder(Color.black,2));
         buttonsBackgroundPanel.setBorder(new LineBorder(Color.black,10));
+        modifyButton.setEnabled(false);
 
         TableSetter.setupLuggageTable(table1,tablePanel,tableBackgroundPanel,controller.getBagsAdminTableModel(),5);
         UtilFunctionsForGUI.addHoverEffect(returnButton);
@@ -70,17 +71,29 @@ public class BagagliAdminGUI {
             }
         });
         modifyButton.addActionListener(_ -> {
-            for (int row : table1.getSelectedRows()) {
-                String codice = (String) table1.getValueAt(row, 0);
-                try {
-                    controller.modificaBagaglio(codice.trim(),Objects.requireNonNull(modifyBox.getSelectedItem()).toString().trim());
-                    // ??
-                    TableSetter.setupLuggageTable(table1,tablePanel,tableBackgroundPanel,controller.getBagsAdminTableModel(),5);
-                    controller.cercaBagaglioAdmin(codeField.getText().trim(), Objects.requireNonNull(typeBox.getSelectedItem()).toString().trim(), Objects.requireNonNull(stateBox.getSelectedItem()).toString().trim());
-                } catch (SQLException ex) {
-                    ErrorPanel.showErrorDialog(null,"Qualcosa è andato storto","Errore Modifica Bagaglio");
-                    Logger.getLogger(LoginGUI.class.getName()).log(Level.SEVERE, "Errore Modifica Bagaglio", ex);
+            String modifyText = Objects.requireNonNull(modifyBox.getSelectedItem()).toString().trim();
+            if(modifyText.isBlank()) {
+                ErrorPanel.showErrorDialog(null,"Seleziona un'opzione valida per la modifica.","Seleziona un'opzione");
+                return;
+            }
+            ConfirmDialog conferma = new ConfirmDialog(null, "Sei sicuro di procedere con le modifiche?", "Conferma Modifiche");
+            if (conferma.showDialog()) {
+                for (int row : table1.getSelectedRows()) {
+                    String codice = (String) table1.getValueAt(row, 0);
+                    try {
+                        controller.modificaBagaglio(codice.trim(),modifyText);
+                        table1.getModel().setValueAt(modifyText,table1.convertRowIndexToModel(row),3);
+                    } catch (SQLException ex) {
+                        ErrorPanel.showErrorDialog(null,"Qualcosa è andato storto","Errore Modifica Bagaglio");
+                        Logger.getLogger(LoginGUI.class.getName()).log(Level.SEVERE, "Errore Modifica Bagaglio", ex);
+                    }
                 }
+            }
+        });
+        table1.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) { // Per evitare eventi multipli
+                int selectedRow = table1.getSelectedRow();
+                modifyButton.setEnabled(selectedRow != -1);
             }
         });
     }

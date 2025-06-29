@@ -35,6 +35,7 @@ public class HomePageAdmin {
         UtilFunctionsForGUI.setupFrame(frame);
 
         logoutButton.addActionListener(_ -> {
+            controller.logoutAdmin();
             frameChiamante.setVisible(true);
             frame.dispose();
         });

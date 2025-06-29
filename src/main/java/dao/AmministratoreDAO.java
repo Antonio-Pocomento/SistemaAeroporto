@@ -7,7 +7,6 @@ import javax.swing.table.DefaultTableModel;
 import java.sql.SQLException;
 
 public interface AmministratoreDAO {
-    void showFlights(DefaultTableModel flightsModel, Amministratore admin) throws SQLException;
     void addFlights(Amministratore admin) throws SQLException;
     void aggiornaVolo(Volo volo) throws SQLException;
     void inserisciVolo(Volo volo, Amministratore admin) throws SQLException;

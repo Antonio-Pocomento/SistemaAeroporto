@@ -146,6 +146,9 @@
                       <model>
                         <item value=""/>
                         <item value="Zaino"/>
+                        <item value="Borsa"/>
+                        <item value="Trolley"/>
+                        <item value="Valigia"/>
                       </model>
                     </properties>
                   </component>

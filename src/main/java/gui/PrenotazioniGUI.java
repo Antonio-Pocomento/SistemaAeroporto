@@ -27,6 +27,7 @@ public class PrenotazioniGUI {
     private JPanel fieldPanel;
     private static final String DEFAULT_PASSENGER_TEXT = "Nome Passeggero";
     private static final String DEFAULT_CODEFIELD_TEXT = "Codice Volo Prenotato";
+    private static final String DEFAULT_MODIFYERROR_TEXT = "Errore Modifica Prenotazione";
 
     public PrenotazioniGUI(JFrame frameChiamante, Controller controller) {
         UtilFunctionsForGUI.setupLayoutAndBackground(frame,prenotazioniPanel);
@@ -40,6 +41,7 @@ public class PrenotazioniGUI {
         cercaButton.setBorder(new LineBorder(Color.BLACK,3));
         codeField.setBorder(new LineBorder(Color.BLACK,2));
         passengerField.setBorder(new LineBorder(Color.BLACK,2));
+        modifyButton.setEnabled(false);
 
         UtilFunctionsForGUI.addHoverEffect(returnButton);
         UtilFunctionsForGUI.addHoverEffect(modifyButton);
@@ -47,7 +49,6 @@ public class PrenotazioniGUI {
         UtilFunctionsForGUI.addTextFieldPlaceholder(passengerField,DEFAULT_PASSENGER_TEXT);
         UtilFunctionsForGUI.addTextFieldPlaceholder(codeField,DEFAULT_CODEFIELD_TEXT);
         UtilFunctionsForGUI.setupFrame(frame);
-
 
         frame.addWindowListener(new WindowAdapter() {
             @Override
@@ -68,14 +69,36 @@ public class PrenotazioniGUI {
             }
         });
         modifyButton.addActionListener(_ -> {
-            for (int row : table1.getSelectedRows()) {
-                int numBiglietto = (int) table1.getValueAt(row, 0);
-                try {
-                    controller.modificaPrenotazione(numBiglietto, Objects.requireNonNull(modifyBox.getSelectedItem()).toString().trim());
-                } catch (SQLException ex) {
-                    ErrorPanel.showErrorDialog(null,"Qualcosa è andato storto","Errore Modifica Prenotazione");
-                    Logger.getLogger(LoginGUI.class.getName()).log(Level.SEVERE, "ERRORE: Modifica Prenotazione", ex);
+            String modifyText = Objects.requireNonNull(modifyBox.getSelectedItem()).toString().trim();
+            if(modifyText.isBlank()) {
+                ErrorPanel.showErrorDialog(null,"Seleziona come modificare la prenotazione.",DEFAULT_MODIFYERROR_TEXT);
+                return;
+            }
+            int[] selectedRows = table1.getSelectedRows();
+            for(int row : selectedRows) {
+                if(table1.getValueAt(row,4).toString().trim().equals("Cancellata")) {
+                    ErrorPanel.showErrorDialog(null,"Non puoi modificare una prenotazione che hai cancellato!",DEFAULT_MODIFYERROR_TEXT);
+                    return;
                 }
+            }
+            ConfirmDialog conferma = new ConfirmDialog(null, "Sei sicuro di procedere con la modifica?", modifyText + " Prenotazione");
+            if (conferma.showDialog()) {
+                for (int row : selectedRows) {
+                    int numBiglietto = (int) table1.getValueAt(row, 0);
+                    try {
+                        controller.modificaPrenotazione(numBiglietto, modifyText+"ta");
+                        table1.getModel().setValueAt(modifyText+"ta",table1.convertRowIndexToModel(row),4);
+                    } catch (SQLException ex) {
+                        ErrorPanel.showErrorDialog(null,"Qualcosa è andato storto",DEFAULT_MODIFYERROR_TEXT);
+                        Logger.getLogger(LoginGUI.class.getName()).log(Level.SEVERE, DEFAULT_MODIFYERROR_TEXT, ex);
+                    }
+                }
+            }
+        });
+        table1.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) { // Per evitare eventi multipli
+                int selectedRow = table1.getSelectedRow();
+                modifyButton.setEnabled(selectedRow != -1);
             }
         });
     }

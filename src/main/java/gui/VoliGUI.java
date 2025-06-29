@@ -5,6 +5,8 @@ import controller.Controller;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 public class VoliGUI {
     public final JFrame frame = new JFrame("Voli");
@@ -30,10 +32,17 @@ public class VoliGUI {
         UtilFunctionsForGUI.setupFrame(frame);
 
         prenotaButton.addActionListener(_ -> {
-            CheckInGUI checkGUI = new CheckInGUI(frame, controller);
-            controller.iniziaPrenotazione((String) table1.getValueAt(table1.getSelectedRow(), 0));
-            checkGUI.frame.setVisible(true);
-            frame.setVisible(false);
+            if((int)table1.getValueAt(table1.getSelectedRow(), 1) <= 0)
+            {
+                ErrorPanel.showErrorDialog(null,"I posti disponibili per questo volo sono esauriti.","Errore Prenotazione");
+            } else if (!table1.getValueAt(table1.getSelectedRow(), 3).equals("Napoli")) {
+                ErrorPanel.showErrorDialog(null,"Non è possibile prenotarsi per voli in arrivo.","Errore Prenotazione");
+            } else{
+                CheckInGUI checkGUI = new CheckInGUI(frame, controller);
+                controller.iniziaPrenotazione((String) table1.getValueAt(table1.getSelectedRow(), 0));
+                checkGUI.frame.setVisible(true);
+                frame.setVisible(false);
+            }
         });
         searchButton.addActionListener(_ -> {
             CercaVoloGUI cercaGUI = new CercaVoloGUI(frame, controller);
@@ -49,6 +58,13 @@ public class VoliGUI {
             if (!e.getValueIsAdjusting()) { // Per evitare eventi multipli
                 int selectedRow = table1.getSelectedRow();
                 prenotaButton.setEnabled(selectedRow != -1);
+            }
+        });
+        frame.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentShown(ComponentEvent e) {
+                super.componentShown(e);
+                TableSetter.setupFlightTable(table1, tablePanel, tableBackgroundPanel, controller.getFlightsModel(),10);
             }
         });
     }

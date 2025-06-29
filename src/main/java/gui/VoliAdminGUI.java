@@ -38,7 +38,10 @@ public class VoliAdminGUI {
 
         modifyButton.addActionListener(_ -> {
             try {
-                controller.salvaModificheDaTabella(table1);
+                ConfirmDialog conferma = new ConfirmDialog(null, "Sei sicuro di procedere con le modifiche effettuate?", "Conferma Modifiche");
+                if (conferma.showDialog()) {
+                    controller.salvaModificheDaTabella(table1);
+                }
             } catch (ModifyTableException ex) {
                 ErrorPanel.showErrorDialog(null,"Qualcosa è andato storto","Errore Modifica Volo");
                 Logger.getLogger(LoginGUI.class.getName()).log(Level.SEVERE, "ERRORE: Modifica Volo", ex);

@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Volo {
-    private String codice;
-    private int nPosti;
+    private final String codice;
+    private final int nPosti;
     private int postiDisponibili;
     private String compagniaAerea;
     private String aeroportoOrigine;
@@ -17,7 +17,7 @@ public class Volo {
     private LocalTime ritardo;
     private StatoVolo stato;
     private Integer numeroGate;
-    private ArrayList<Prenotazione> prenotazioni = new ArrayList<Prenotazione>();
+    private final ArrayList<Prenotazione> prenotazioni = new ArrayList<>();
 
     public Volo(String codice, int nPosti, int postiDisponibili, String compagniaAerea, String aeroportoOrigine, String aeroportoDestinazione, LocalDate data,
                 LocalTime orario, LocalTime ritardo, StatoVolo stato, Integer numeroGate) {
@@ -34,7 +34,7 @@ public class Volo {
         this.numeroGate = numeroGate;
     }
 
-    /// /// GETTERs
+    // GETTERS
     public String getCodice() {return codice;}
     public int getNPosti() {return nPosti;}
     public int getPostiDisponibili() {return postiDisponibili;}
@@ -47,27 +47,21 @@ public class Volo {
     public StatoVolo getStato() {return stato;}
     public Integer getNumeroGate() {return numeroGate;}
     public List<Prenotazione> getPrenotazioni() {return prenotazioni;}
-    public Prenotazione getPrenotazione(int numeroBiglietto){
-        for(Prenotazione prenotazione : prenotazioni)
-            if(prenotazione.getNumeroBiglietto() == numeroBiglietto) return prenotazione;
-        System.out.println("\nErrore: Prenotazione per il volo non trovata\n");
-        return null;
-    }
-    /// ///
 
     public void addPrenotazione(Prenotazione prenotazione) {
         prenotazioni.add(prenotazione);
         postiDisponibili--;
     }
 
-    /// /// SETTERs
-    //public void setCodice(String codice) {this.codice = codice;}
+    // SETTERS
+    public void setCompagniaAerea(String compagniaAerea) {this.compagniaAerea = compagniaAerea;}
+    public void setAeroportoOrigine(String aeroportoOrigine) {this.aeroportoOrigine = aeroportoOrigine;}
+    public void setAeroportoDestinazione(String aeroportoDestinazione) {this.aeroportoDestinazione = aeroportoDestinazione;}
     public void setData(LocalDate data) {this.data = data;}
     public void setOrario(LocalTime orario) {this.orario = orario;}
     public void setRitardo(LocalTime ritardo) {this.ritardo = ritardo;}
     public void setStato(StatoVolo stato) {this.stato = stato;}
     public void setNumeroGate(Integer numeroGate) {this.numeroGate = numeroGate;}
     public void setPostiDisponibili(int posti) {this.postiDisponibili = posti;}
-    /// ///
 
 }

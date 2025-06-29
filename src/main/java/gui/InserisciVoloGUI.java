@@ -90,8 +90,11 @@ public class InserisciVoloGUI {
         });
         insertButton.addActionListener(_ -> {
             try {
-                controller.inserisciVolo(codeField.getText().trim(),seatField.getText().trim(),companyField.getText().trim(),aerOrigineField.getText().trim(),
-                        aerArrivoField.getText().trim(),dateField.getText().trim(),timeField.getText().trim(),gateField.getText().trim());
+                ConfirmDialog conferma = new ConfirmDialog(null, "Sei sicuro di aggiungere questo volo?", "Conferma Inserimento");
+                if (conferma.showDialog()) {
+                    controller.inserisciVolo(codeField.getText().trim(),seatField.getText().trim(),companyField.getText().trim(),aerOrigineField.getText().trim(),
+                            aerArrivoField.getText().trim(),dateField.getText().trim(),timeField.getText().trim(),gateField.getText().trim());
+                }
             } catch (Exception ex) {
                 ErrorPanel.showErrorDialog(null,"Qualcosa è andato storto","Errore Inserimento");
                 Logger.getLogger(LoginGUI.class.getName()).log(Level.SEVERE, "Errore Inserimento Volo", ex);

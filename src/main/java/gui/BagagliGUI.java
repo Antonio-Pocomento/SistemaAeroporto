@@ -38,6 +38,7 @@ public class BagagliGUI {
         typeBox.setBorder(new LineBorder(Color.black,2));
         stateBox.setBorder(new LineBorder(Color.black,2));
         codeField.setBorder(new LineBorder(Color.black,2));
+        segnalaSmarrimentoButton.setEnabled(false);
 
         UtilFunctionsForGUI.addHoverEffect(cercaButton);
         UtilFunctionsForGUI.addHoverEffect(tornaIndietroButton);
@@ -64,16 +65,31 @@ public class BagagliGUI {
             }
         });
         segnalaSmarrimentoButton.addActionListener(_ -> {
-            for (int row : table1.getSelectedRows()) {
-                String codice = (String) table1.getValueAt(row, 0);
-                try {
-                    controller.segnalaBagaglio(codice);
-                    TableSetter.setupLuggageTable(table1,tablePanel,tableBackgroundPanel,controller.getBagsTableModel(),5);
-                    controller.cercaBagaglio(codeField.getText().trim(), Objects.requireNonNull(typeBox.getSelectedItem()).toString().trim(), Objects.requireNonNull(stateBox.getSelectedItem()).toString().trim());
-                } catch (SQLException ex) {
-                    ErrorPanel.showErrorDialog(null,"Qualcosa è andato storto","Errore Segnalazione Bagaglio");
-                    Logger.getLogger(LoginGUI.class.getName()).log(Level.SEVERE, "Errore Segnalazione Bagaglio", ex);
+            int[] selectedRows = table1.getSelectedRows();
+            for (int row : selectedRows) {
+                if(table1.getValueAt(row,3).toString().trim().equals("Smarrito")) {
+                    ErrorPanel.showErrorDialog(null,"Uno o più bagagli selezionati sono stati già segnalati come smarriti!","Bagaglio/i già segnalato/i");
+                    return;
                 }
+            }
+            ConfirmDialog conferma = new ConfirmDialog(null, "Sei sicuro di voler segnalare come smarrito/i?", "Conferma Segnalazione");
+            if (conferma.showDialog()) {
+                for (int row : selectedRows) {
+                    String codice = (String) table1.getValueAt(row, 0);
+                    try {
+                        controller.segnalaBagaglio(codice);
+                        table1.getModel().setValueAt("Smarrito",table1.convertRowIndexToModel(row),3);
+                    } catch (SQLException ex) {
+                        ErrorPanel.showErrorDialog(null,"Qualcosa è andato storto","Errore Segnalazione Bagaglio");
+                        Logger.getLogger(LoginGUI.class.getName()).log(Level.SEVERE, "Errore Segnalazione Bagaglio", ex);
+                    }
+                }
+            }
+        });
+        table1.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) { // Per evitare eventi multipli
+                int selectedRow = table1.getSelectedRow();
+                segnalaSmarrimentoButton.setEnabled(selectedRow != -1);
             }
         });
     }

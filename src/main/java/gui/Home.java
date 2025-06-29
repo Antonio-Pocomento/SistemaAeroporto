@@ -44,6 +44,7 @@ public class Home {
 
     public static void main(String[] args) {
         System.setProperty("sun.java2d.uiScale", "1.0");
+
         frame = new JFrame("Home");
         frame.setContentPane(new Home().homePanel);
 

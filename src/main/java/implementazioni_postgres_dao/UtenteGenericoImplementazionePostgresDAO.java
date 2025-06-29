@@ -6,15 +6,12 @@ import model.*;
 
 import javax.swing.table.DefaultTableModel;
 import java.sql.*;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class UtenteGenericoImplementazionePostgresDAO implements UtenteGenericoDAO {
-    private static int testval = 21;
+public class UtenteGenericoImplementazionePostgresDAO extends UserUtilFunctionsForDAO implements UtenteGenericoDAO {
 
     public void showFlights(DefaultTableModel flightsModel) throws SQLException {
         String sql = "SELECT codice, posti_disponibili, compagnia_aerea, aeroporto_origine, " +
@@ -23,214 +20,123 @@ public class UtenteGenericoImplementazionePostgresDAO implements UtenteGenericoD
 
         try (Connection conn = ConnessioneDatabase.getInstance().connection;
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-
             flightsModel.setRowCount(0);
-            addRows(stmt, flightsModel);
-        }
-    }
-
-    public void showLuggage(DefaultTableModel luggageModel, UtenteGenerico utente) throws SQLException{
-        String sql = "SELECT B.codice, B.stato, B.tipo, B.codicefiscalepasseggero " +
-                "FROM bagaglio B JOIN prenotazione P ON B.codicefiscalepasseggero = P.codicefiscale " +
-                "WHERE P.nomeutente = ?";
-
-        try (Connection conn = ConnessioneDatabase.getInstance().connection;
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, utente.getNomeUtente());
-            luggageModel.setRowCount(0);
-            addLuggageRows(stmt, luggageModel);
+            addFlightRows(stmt, flightsModel);
         }
     }
 
     public void segnalaBagaglio(String codice) throws SQLException {
-        String sql = "UPDATE bagaglio SET stato = ?::statobagaglio WHERE codice = ?";
+        String sql = "UPDATE bagaglio SET stato = ?::stato_bagaglio WHERE codice = ?";
         try (Connection conn = ConnessioneDatabase.getInstance().connection;
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, "SMARRITO");
-            stmt.setString(2, codice);
+            stmt.setInt(2, Integer.parseInt(codice.replace("BAG-",""), 36));
             stmt.executeUpdate();
         }
     }
 
     public void modificaPrenotazione(int numeroBiglietto, String stato) throws SQLException{
-        String sql = "UPDATE prenotazione SET stato = ?::statoprenotazione WHERE numerobiglietto = ?";
+        String updatePrenotazione = "UPDATE prenotazione SET stato = ?::stato_prenotazione WHERE numero_biglietto = ?";
+        String selectCodiceVolo = "SELECT codice_volo FROM prenotazione WHERE numero_biglietto = ?";
+        String increasePosti = "UPDATE volo SET posti_disponibili = posti_disponibili + 1 WHERE codice = ?";
 
-        try (Connection conn = ConnessioneDatabase.getInstance().connection;
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, stato.replace(" ", "_").toUpperCase());
-            stmt.setInt(2, numeroBiglietto);
-            stmt.executeUpdate();
+        Connection conn = ConnessioneDatabase.getInstance().connection;
+        try {
+            conn.setAutoCommit(false);
+
+            String statoFormatted = stato.replace(" ", "_").toUpperCase();
+
+            // Se stato = "CANCELLATA"
+            String codiceVolo = null;
+            if ("CANCELLATA".equals(statoFormatted)) {
+                try (PreparedStatement ps = conn.prepareStatement(selectCodiceVolo)) {
+                    ps.setInt(1, numeroBiglietto);
+                    try (ResultSet rs = ps.executeQuery()) {
+                        if (rs.next()) {
+                            codiceVolo = rs.getString("codice_volo");
+                        }
+                    }
+                }
+            }
+
+            // Aggiorna stato prenotazione
+            try (PreparedStatement stmt = conn.prepareStatement(updatePrenotazione)) {
+                stmt.setString(1, statoFormatted);
+                stmt.setInt(2, numeroBiglietto);
+                stmt.executeUpdate();
+            }
+
+            // Se cancellata, aumenta posti
+            if ("CANCELLATA".equals(statoFormatted)) {
+                try (PreparedStatement ps = conn.prepareStatement(increasePosti)) {
+                    ps.setString(1, codiceVolo);
+                    ps.executeUpdate();
+                }
+            }
+            conn.commit();
+        } catch (SQLException e) {
+            conn.rollback();
+            throw e;
+        } finally {
+            conn.setAutoCommit(true);
         }
-
     }
 
     public void searchLuggage(DefaultTableModel model, UtenteGenerico utente, String codice, String tipo, String stato) throws SQLException {
-        StringBuilder query = new StringBuilder("SELECT B.codice, B.stato, B.tipo, B.codicefiscalepasseggero " +
-                "FROM bagaglio B JOIN prenotazione P ON B.codicefiscalepasseggero = P.codicefiscale " +
-                "WHERE P.nomeutente = ?");
-        List<Object> parametri = new ArrayList<>();
-        parametri.add(utente.getNomeUtente());
-
-        if (!codice.isBlank() && !codice.equals("Codice Bagaglio")) {
-            query.append(" AND B.codice = ?");
-            parametri.add(codice);
-        }
-        if (!tipo.isBlank()) {
-            query.append(" AND B.tipo = ?");
-            parametri.add(tipo);
-        }
-        if (!stato.isBlank()) {
-            query.append(" AND B.stato = ?::statobagaglio");
-            parametri.add(stato.replace(" ", "_").toUpperCase());
-        }
-
-        try (Connection conn = ConnessioneDatabase.getInstance().connection;
-             PreparedStatement ps = conn.prepareStatement(query.toString())) {
-            for (int i = 0; i < parametri.size(); i++) {
-                ps.setObject(i + 1, parametri.get(i));
-            }
-            addLuggageRows(ps, model);
-        }
+        StringBuilder query = new StringBuilder("SELECT B.codice, B.stato, B.tipo, PA.nome, P.codice_volo " +
+                "FROM bagaglio B JOIN prenotazione P ON B.codice_fiscale_passeggero = P.codice_fiscale " +
+                "JOIN passeggero PA ON PA.codice_fiscale = B.codice_fiscale_passeggero " +
+                "WHERE P.nome_utente = ?");
+        List<Object> params = List.of(utente.getNomeUtente());
+        searchLuggageInternal(model, query, params, codice, tipo, stato);
     }
 
-    private void addRows(PreparedStatement ps, DefaultTableModel model) {
-        model.setRowCount(0);
-        try (ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                Object[] row = {
+    public Volo voloDaPrenotare(String codiceVolo) throws SQLException{
+        String sql = "SELECT codice, n_posti, posti_disponibili, compagnia_aerea, " +
+                "aeroporto_origine, aeroporto_destinazione, data, orario, ritardo, stato, numero_gate " +
+                "FROM volo " +
+                "WHERE codice = ? ";
+        try (Connection conn = ConnessioneDatabase.getInstance().connection;
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, codiceVolo);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()) {
+                return new Volo(
                         rs.getString("codice"),
+                        rs.getInt("n_posti"),
                         rs.getInt("posti_disponibili"),
                         rs.getString("compagnia_aerea"),
                         rs.getString("aeroporto_origine"),
                         rs.getString("aeroporto_destinazione"),
-                        rs.getDate("data").toLocalDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
-                        rs.getTime("orario").toLocalTime().truncatedTo(ChronoUnit.MINUTES),
-                        rs.getTime("ritardo") != null ? rs.getTime("ritardo").toLocalTime().truncatedTo(ChronoUnit.MINUTES) : null,
-                        StatoVolo.valueOf(rs.getString("stato")).toString(),
-                        rs.getInt("numero_gate") != 0 ? rs.getInt("numero_gate") : "",
-                };
-                model.addRow(row);
+                        rs.getDate("data").toLocalDate(),
+                        rs.getTime("orario").toLocalTime(),
+                        rs.getTime("ritardo") != null ? rs.getTime("ritardo").toLocalTime() : null,
+                        StatoVolo.valueOf(rs.getString("stato")),
+                        rs.getInt("numero_gate")
+                );
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
+        return null;
     }
 
     public void ricercaVolo(DefaultTableModel model, String codice, String posti,
                             String compagnia, String aeroportoOrigine, String aeroportoDestinazione,
                             String data, String orario, String ritardo, String  stato, String numGate) throws SQLException {
         StringBuilder query = new StringBuilder("SELECT * FROM volo WHERE 1=1");
-        List<Object> parametri = new ArrayList<>();
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
-        if (!codice.isBlank() && !codice.equals("Codice Volo")) {
-            query.append(" AND codice = ?");
-            parametri.add(codice);
-        }
-        if (!posti.isBlank() && !posti.equals("Posti")) {
-            query.append(" AND posti_disponibili = ?");
-            parametri.add(Integer.parseInt(posti));
-        }
-        if (!compagnia.isBlank() && !compagnia.equals("Compagnia Aerea")) {
-            query.append(" AND compagnia_aerea = ?");
-            parametri.add(compagnia);
-        }
-        if (!aeroportoOrigine.isBlank() && !aeroportoOrigine.equals("Aeroporto Di Origine")) {
-            query.append(" AND aeroporto_origine = ?");
-            parametri.add(aeroportoOrigine);
-        }
-        if (!aeroportoDestinazione.isBlank() && !aeroportoDestinazione.equals("Aeroporto Di Arrivo")) {
-            query.append(" AND aeroporto_destinazione = ?");
-            parametri.add(aeroportoDestinazione);
-        }
-        if (!data.isBlank() && !data.equals("Data Volo (DD/MM/YYYY)")) {
-            query.append(" AND data = ?");
-            parametri.add(LocalDate.parse(data, dateFormatter)); // Se usi java.sql.Date
-        }
-        if (!orario.isBlank() && !orario.equals("Orario Volo (HH:MM)")) {
-            query.append(" AND orario = ?");
-            parametri.add(LocalTime.parse(orario).truncatedTo(ChronoUnit.MINUTES)); // HH:mm → HH:mm:ss
-        }
-        if(!ritardo.isBlank() && !ritardo.equals("Ritardo Volo (HH:MM)")) {
-            query.append(" AND ritardo = ?");
-            parametri.add(LocalTime.parse(ritardo).truncatedTo(ChronoUnit.MINUTES));
-        }
-        if(!stato.isBlank()) {
-            query.append(" AND stato = ?::stato_volo");
-            parametri.add(stato.replace(" ", "_").toUpperCase());
-        }
-        if(!numGate.isBlank() && !numGate.equals("Numero Gate")) {
-            query.append(" AND numero_gate = ?");
-            parametri.add(Integer.parseInt(numGate));
-        }
-
-
-        try (Connection conn = ConnessioneDatabase.getInstance().connection;
-             PreparedStatement ps = conn.prepareStatement(query.toString())) {
-            for (int i = 0; i < parametri.size(); i++) {
-                ps.setObject(i + 1, parametri.get(i));
-            }
-            addRows(ps,model);
-        }
-    }
-
-    private void addLuggageRows(PreparedStatement ps, DefaultTableModel model) {
-        model.setRowCount(0);
-        try (ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                Object[] row = {
-                        rs.getString("codice"),
-                        rs.getString("tipo"),
-                        rs.getString("codicefiscalepasseggero"),
-                        StatoBagaglio.valueOf(rs.getString("stato")).toString()
-                };
-                model.addRow(row);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void showReservations(DefaultTableModel reservationModel, UtenteGenerico utente) throws SQLException {
-        String sql = "SELECT PR.numerobiglietto, PR.postoassegnato, PA.nome, PR.codicevolo, " +
-                "PR.stato " + "FROM prenotazione PR JOIN passeggero PA ON PR.codicefiscale = PA.codicefiscale " +
-                "WHERE PR.nomeutente = ?";
-
-        try (Connection conn = ConnessioneDatabase.getInstance().connection;
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, utente.getNomeUtente());
-
-            reservationModel.setRowCount(0);
-            addReservationRows(stmt, reservationModel);
-        }
-    }
-
-    private void addReservationRows(PreparedStatement ps, DefaultTableModel model) {
-        model.setRowCount(0);
-        try (ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                Object[] row = {
-                        rs.getInt("numerobiglietto"),
-                        rs.getString("postoassegnato"),
-                        rs.getString("nome"),
-                        rs.getString("codicevolo"),
-                        StatoPrenotazione.valueOf(rs.getString("stato")).toString(),
-                };
-                model.addRow(row);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        List<Object> params = new ArrayList<>();
+        ricercaVoloInternal(model, query, params, codice, posti, compagnia, aeroportoOrigine, aeroportoDestinazione,
+                data, orario, ritardo, stato, numGate);
     }
 
     public void ricercaPrenotazione(DefaultTableModel model, UtenteGenerico utente, String codiceVolo, String nomePasseggero) throws SQLException {
-        StringBuilder query = new StringBuilder("SELECT * FROM prenotazione PR JOIN passeggero PA ON PR.codicefiscale = PA.codicefiscale " +
-                "WHERE PR.nomeutente = ?");
+        StringBuilder query = new StringBuilder("SELECT * FROM prenotazione PR JOIN passeggero PA ON PR.codice_fiscale = PA.codice_fiscale " +
+                "WHERE PR.nome_utente = ?");
         List<Object> parametri = new ArrayList<>();
         parametri.add(utente.getNomeUtente());
 
         if (!codiceVolo.isBlank() && !codiceVolo.equals("Codice Volo Prenotato")) {
-            query.append(" AND PR.codicevolo = ?");
+            query.append(" AND PR.codice_volo = ?");
             parametri.add(codiceVolo);
         }
         if (!nomePasseggero.isBlank() && !nomePasseggero.equals("Nome Passeggero")) {
@@ -243,24 +149,36 @@ public class UtenteGenericoImplementazionePostgresDAO implements UtenteGenericoD
             for (int i = 0; i < parametri.size(); i++) {
                 ps.setObject(i + 1, parametri.get(i));
             }
-            addReservationRows(ps,model);
+            model.setRowCount(0);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Object[] row = {
+                            rs.getInt("numero_biglietto"),
+                            rs.getString("posto_assegnato"),
+                            rs.getString("nome"),
+                            rs.getString("codice_volo"),
+                            StatoPrenotazione.valueOf(rs.getString("stato")).toString(),
+                    };
+                    model.addRow(row);
+                }
+            }
         }
     }
 
-    public void confirmReservation(String nome, String secondoNome, String cognome, String codiceFiscale, List<String> tipiBagagli, UtenteGenerico utente, String codiceVolo) throws SQLException{
+    public void confirmReservation(String nome, String secondoNome, String cognome, String codiceFiscale, List<String> tipiBagagli, String posto, UtenteGenerico utente, String codiceVolo) throws SQLException{
         try (Connection conn = ConnessioneDatabase.getInstance().connection) {
             conn.setAutoCommit(false);
             try {
-                addPassenger(conn, nome, secondoNome, cognome, codiceFiscale);
-                addReservation(conn, codiceVolo, utente.getNomeUtente(), codiceFiscale);
+                if(!passeggeroExists(conn,codiceFiscale))
+                    addPassenger(conn, nome, secondoNome, cognome, codiceFiscale);
+                addReservation(conn, codiceVolo, utente.getNomeUtente(), codiceFiscale, posto);
                 for(String tipo : tipiBagagli) {
                     addBagaglio(conn,tipo,codiceFiscale);
                 }
-
+                decreaseSeat(conn,codiceVolo);
                 conn.commit();
             } catch (SQLException e) {
                 conn.rollback();
-                System.out.println("Errore, eseguito rollback: " + e.getMessage());
                 throw e;
             } finally {
                 conn.setAutoCommit(true);
@@ -269,21 +187,44 @@ public class UtenteGenericoImplementazionePostgresDAO implements UtenteGenericoD
         }
     }
 
+    private boolean passeggeroExists(Connection conn, String codiceFiscale) throws SQLException {
+        String query = "SELECT 1 FROM passeggero WHERE codice_fiscale = ?";
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, codiceFiscale);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next(); // true se almeno una riga esiste
+            }
+        }
+    }
+
     private void addPassenger(Connection conn, String nome, String secondoNome, String cognome, String codiceFiscale) throws SQLException {
-        String sql = "INSERT INTO passeggero (codicefiscale, nome, secnome, cognome) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO passeggero (codice_fiscale, nome, secondo_nome, cognome) VALUES (?, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, codiceFiscale);
             stmt.setString(2, nome);
-            stmt.setString(3, secondoNome);
+            if(secondoNome.isBlank() || secondoNome.equals("Secondo Nome")) {
+                stmt.setNull(3, Types.VARCHAR);
+            }
+            else
+                stmt.setString(3, secondoNome);
             stmt.setString(4, cognome);
             stmt.executeUpdate();
         }
     }
 
-    private void addReservation(Connection conn, String codiceVolo, String nomeUtente, String codiceFiscale) throws SQLException {
-        String sql = "INSERT INTO prenotazione (postoassegnato, stato, codicevolo, nomeutente, codicefiscale) VALUES (?, ?::statoprenotazione, ?, ?, ?)";
+    private void decreaseSeat(Connection conn, String codiceVolo) throws SQLException {
+        String update = "UPDATE volo SET posti_disponibili = GREATEST(posti_disponibili - 1, 0) WHERE codice = ?";
+
+        try (PreparedStatement ps = conn.prepareStatement(update)) {
+            ps.setString(1, codiceVolo);
+            ps.executeUpdate();
+        }
+    }
+
+    private void addReservation(Connection conn, String codiceVolo, String nomeUtente, String codiceFiscale, String posto) throws SQLException {
+        String sql = "INSERT INTO prenotazione (posto_assegnato, stato, codice_volo, nome_utente, codice_fiscale) VALUES (?, ?::stato_prenotazione, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, "postoassegnato");
+            stmt.setString(1, posto);
             stmt.setString(2, "IN_ATTESA");
             stmt.setString(3, codiceVolo);
             stmt.setString(4, nomeUtente);
@@ -293,14 +234,129 @@ public class UtenteGenericoImplementazionePostgresDAO implements UtenteGenericoD
     }
 
     private void addBagaglio(Connection conn, String tipo, String codiceFiscale) throws SQLException {
-        String sql = "INSERT INTO bagaglio (codice, stato, tipo ,codicefiscalepasseggero) VALUES (?, ?::statobagaglio, ?, ?)";
+        String sql = "INSERT INTO bagaglio (stato, tipo ,codice_fiscale_passeggero) VALUES (?::stato_bagaglio, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, String.valueOf(testval));
-            stmt.setString(2, "CARICATO");
-            stmt.setString(3, tipo);
-            stmt.setString(4, codiceFiscale);
+            stmt.setString(1, "CARICATO");
+            stmt.setString(2, tipo);
+            stmt.setString(3, codiceFiscale);
             stmt.executeUpdate();
-            testval++;
+        }
+    }
+
+    public int currentLuggageCode() throws SQLException {
+        String sql = "SELECT last_value FROM bagaglio_codice_seq";
+        try (Connection conn = ConnessioneDatabase.getInstance().connection;
+        PreparedStatement ps = conn.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+        return -1;
+    }
+
+    public int currentReservationCode() throws SQLException {
+        String sql = "SELECT last_value FROM prenotazione_numerobiglietto_seq";
+        try (Connection conn = ConnessioneDatabase.getInstance().connection;
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+        return -1;
+    }
+
+    public void caricaPrenotazioniUtente(UtenteGenerico utente) throws SQLException {
+        String sqlPrenotazioni =
+                "SELECT pr.numero_biglietto, pr.posto_assegnato, pr.stato AS stato_prenotazione, " +
+                        "pa.nome, pa.secondo_nome, pa.cognome, pa.codice_fiscale, " +
+                        "v.codice AS codice_volo, v.n_posti, v.posti_disponibili, v.compagnia_aerea, " +
+                        "v.aeroporto_origine, v.aeroporto_destinazione, v.data, v.orario, v.ritardo, v.stato AS stato_volo, v.numero_gate, " +
+                        "b.codice AS codice_bagaglio, b.stato AS stato_bagaglio, b.tipo " +
+                        "FROM prenotazione pr " +
+                        "JOIN passeggero pa ON pr.codice_fiscale = pa.codice_fiscale " +
+                        "JOIN volo v ON pr.codice_volo = v.codice " +
+                        "LEFT JOIN bagaglio b ON b.codice_fiscale_passeggero = pa.codice_fiscale " +
+                        "WHERE pr.nome_utente = ? " +
+                        "ORDER BY pr.numero_biglietto";
+
+        try (Connection conn = ConnessioneDatabase.getInstance().connection;
+             PreparedStatement stmt = conn.prepareStatement(sqlPrenotazioni)) {
+
+            stmt.setString(1, utente.getNomeUtente());
+            ResultSet rs = stmt.executeQuery();
+
+            Map<Integer, Prenotazione> prenotazioniMappa = new HashMap<>();
+
+            while (rs.next()) {
+                int numeroBiglietto = rs.getInt("numero_biglietto");
+
+                Prenotazione prenotazione = prenotazioniMappa.get(numeroBiglietto);
+                if (prenotazione == null) {
+                    // Passeggero
+                    Passeggero passeggero = new Passeggero(
+                            rs.getString("nome"),
+                            rs.getString("secondo_nome"),
+                            rs.getString("cognome"),
+                            rs.getString("codice_fiscale")
+                    );
+
+                    // Volo
+                    Volo volo = new Volo(
+                            rs.getString("codice_volo"),
+                            rs.getInt("n_posti"),
+                            rs.getInt("posti_disponibili"),
+                            rs.getString("compagnia_aerea"),
+                            rs.getString("aeroporto_origine"),
+                            rs.getString("aeroporto_destinazione"),
+                            rs.getDate("data").toLocalDate(),
+                            rs.getTime("orario").toLocalTime(),
+                            rs.getTime("ritardo") != null ? rs.getTime("ritardo").toLocalTime() : null,
+                            StatoVolo.valueOf(rs.getString("stato_volo")),
+                            rs.getInt("numero_gate")
+                    );
+
+                    // Prenotazione
+                    prenotazione = new Prenotazione(
+                            rs.getInt("numero_biglietto"),
+                            rs.getString("posto_assegnato"),
+                            volo,
+                            passeggero,
+                            utente
+                    );
+                    prenotazione.setStato(StatoPrenotazione.valueOf(rs.getString("stato_prenotazione")));
+
+                    int codiceBagaglio = rs.getInt("codice_bagaglio");
+                    if (codiceBagaglio > 0) {
+                        Bagaglio bagaglio = new Bagaglio(
+                                codiceBagaglio,
+                                passeggero,
+                                rs.getString("tipo")
+                        );
+                        passeggero.getBagagli().add(bagaglio);
+                        bagaglio.setStato(StatoBagaglio.valueOf(rs.getString("stato_bagaglio")));
+                    }
+
+
+                    prenotazioniMappa.put(numeroBiglietto, prenotazione);
+                }
+                else
+                {
+                    // Bagagli (se presenti)
+                    int codiceBagaglio = rs.getInt("codice_bagaglio");
+                    Bagaglio bagaglio = new Bagaglio(
+                            codiceBagaglio,
+                            prenotazione.getPasseggero(),
+                            rs.getString("tipo")
+                    );
+                    prenotazione.getPasseggero().getBagagli().add(bagaglio);
+                    bagaglio.setStato(StatoBagaglio.valueOf(rs.getString("stato_bagaglio")));
+                }
+            }
+
+            utente.getPrenotazioniUtente().clear();
+            utente.getPrenotazioniUtente().addAll(prenotazioniMappa.values());
         }
     }
 }

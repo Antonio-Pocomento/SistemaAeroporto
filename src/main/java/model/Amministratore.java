@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Amministratore extends Utente {
-    private ArrayList<Volo> voliGestiti = new ArrayList<>();
+    private final ArrayList<Volo> voliGestiti = new ArrayList<>();
 
     public Amministratore(String nomeUtente, String email, String passwordUtente) {
         super(nomeUtente, email, passwordUtente);
@@ -16,11 +16,17 @@ public class Amministratore extends Utente {
         return voliGestiti;
     }
 
-    /*public void modificaCodiceVolo(Volo volo, String codice){
-        volo.setCodice(codice);
-    }*/
     public void modificaDataVolo(Volo volo, LocalDate data){
         volo.setData(data);
+    }
+    public void modificaCompagniaVolo(Volo volo, String compagnia){
+        volo.setCompagniaAerea(compagnia);
+    }
+    public void modificaAeroportoOrigine(Volo volo, String aeroporto){
+        volo.setAeroportoOrigine(aeroporto);
+    }
+    public void modificaAeroportoDestinazione(Volo volo, String aeroporto){
+        volo.setAeroportoDestinazione(aeroporto);
     }
     public void modificaPostiVolo(Volo volo, int posti){
         volo.setPostiDisponibili(posti);
@@ -36,10 +42,6 @@ public class Amministratore extends Utente {
     }
     public void modificaNumeroGateVolo(Volo volo, Integer numeroGate){
         volo.setNumeroGate(numeroGate);
-    }
-
-    public void modificaStatoBagaglio(Bagaglio bagaglio, StatoBagaglio stato){
-        bagaglio.setStato(stato);
     }
 
     public void gestisciVolo(Volo volo){

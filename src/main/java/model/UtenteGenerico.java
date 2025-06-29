@@ -1,48 +1,16 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class UtenteGenerico extends Utente {
-    private ArrayList<Prenotazione> prenotazioniUtente = new ArrayList<Prenotazione>();
+    private final ArrayList<Prenotazione> prenotazioniUtente = new ArrayList<>();
 
     public UtenteGenerico(String nomeUtente, String email, String passwordUtente) {
         super(nomeUtente, email, passwordUtente);
     }
 
-    public ArrayList<Prenotazione> getPrenotazioniUtente() {
+    public List<Prenotazione> getPrenotazioniUtente() {
         return prenotazioniUtente;
-    }
-
-    public Prenotazione getPrenotazioneUtente(int numeroBiglietto) {
-        for (Prenotazione p : prenotazioniUtente) {
-            if(p.getNumeroBiglietto() == numeroBiglietto) return p;
-        };
-        System.out.println("\nErrore: Prenotazione dell'utente non trovata\n");
-        return null;
-    }
-
-    public void prenotaVolo(Volo volo) {
-        if(!volo.getAeroportoOrigine().equals("Napoli")) {
-            System.out.println("Non è possibile prenotare voli in arrivo");
-            return;
-        }
-        if(volo.getPostiDisponibili()<=0)
-        {
-            System.out.println("Posti per questo volo esauriti");
-            return;
-        }
-
-        Prenotazione prenotazione = new Prenotazione(volo,this);
-        prenotazioniUtente.add(prenotazione);
-        volo.addPrenotazione(prenotazione);
-        System.out.println("\nPrenotazione aggiunta");
-    }
-
-    public void segnalaSmarrimento(Bagaglio bagaglio){
-        bagaglio.setStato(StatoBagaglio.SMARRITO);
-    }
-
-    public void modificaPrenotazione(Prenotazione prenotazione, StatoPrenotazione statoPrenotazione) {
-        prenotazione.setStato(statoPrenotazione);
     }
 }

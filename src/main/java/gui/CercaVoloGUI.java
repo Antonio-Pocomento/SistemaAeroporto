@@ -100,10 +100,17 @@ public class CercaVoloGUI {
             }
         });
         prenotaButton.addActionListener(_ -> {
-            CheckInGUI checkGUI = new CheckInGUI(frame, controller);
-            controller.iniziaPrenotazione((String) table1.getValueAt(table1.getSelectedRow(), 0));
-            checkGUI.frame.setVisible(true);
-            frame.setVisible(false);
+            if((int)table1.getValueAt(table1.getSelectedRow(), 1) <= 0)
+            {
+                ErrorPanel.showErrorDialog(null,"I posti disponibili per questo volo sono esauriti.","Errore Prenotazione");
+            } else if (!table1.getValueAt(table1.getSelectedRow(), 3).equals("Napoli")) {
+                ErrorPanel.showErrorDialog(null,"Non è possibile prenotarsi per voli in arrivo.","Errore Prenotazione");
+            } else{
+                CheckInGUI checkGUI = new CheckInGUI(frame, controller);
+                controller.iniziaPrenotazione((String) table1.getValueAt(table1.getSelectedRow(), 0));
+                checkGUI.frame.setVisible(true);
+                frame.setVisible(false);
+            }
         });
         table1.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) { // Per evitare eventi multipli

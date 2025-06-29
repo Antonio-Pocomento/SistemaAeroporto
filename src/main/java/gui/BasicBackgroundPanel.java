@@ -5,7 +5,7 @@ import java.awt.*;
 
 public class BasicBackgroundPanel extends JPanel
 {
-    private final Image backgroundImage;
+    private final transient Image backgroundImage;
 
     public BasicBackgroundPanel(Image backgroundImage)
     {

@@ -53,8 +53,8 @@
                   <font name="Times New Roman" size="24" style="0"/>
                   <model>
                     <item value=""/>
-                    <item value="Confermata"/>
-                    <item value="Cancellata"/>
+                    <item value="Conferma"/>
+                    <item value="Cancella"/>
                   </model>
                 </properties>
               </component>

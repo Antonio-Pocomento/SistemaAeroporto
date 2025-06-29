@@ -1,36 +1,40 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Passeggero {
-    private String nome;
-    private String secondoNome;
-    private String cognome;
-    private String codiceFiscale;
-    private ArrayList<Bagaglio> Bagagli = new ArrayList<Bagaglio>();
-    private Prenotazione prenotazione;
+    private final String nome;
+    private final String secondoNome;
+    private final String cognome;
+    private final String codiceFiscale;
+    private final ArrayList<Bagaglio> bagagli = new ArrayList<>();
 
-    public Passeggero(String nome, String secondoNome, String cognome, String codiceFiscale,Prenotazione prenotazione){
+    public Passeggero(String nome, String secondoNome, String cognome, String codiceFiscale){
         this.nome = nome;
         this.secondoNome = secondoNome;
         this.cognome = cognome;
         this.codiceFiscale = codiceFiscale;
-        this.prenotazione = prenotazione;
     }
 
     public void addBagaglio(Bagaglio b){
-        Bagagli.add(b);
+        bagagli.add(b);
     }
 
     public String getNome() {
         return nome;
     }
-    public ArrayList<Bagaglio> getBagagli() {return Bagagli;}
+    public List<Bagaglio> getBagagli() {return bagagli;}
 
-    public Bagaglio getBagaglio(String codiceBagaglio){
-        for(Bagaglio b : Bagagli){
-            if(b.getCodice().equals(codiceBagaglio)){return b;}
-        }
-        return null;
+    public String getSecondoNome() {
+        return secondoNome;
+    }
+
+    public String getCognome() {
+        return cognome;
+    }
+
+    public String getCodiceFiscale() {
+        return codiceFiscale;
     }
 }

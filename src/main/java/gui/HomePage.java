@@ -41,6 +41,7 @@ public class HomePage {
         UtilFunctionsForGUI.setupFrame(frame);
 
         logoutButton.addActionListener(_ -> {
+            controller.logout();
             frameChiamante.setVisible(true);
             frame.dispose();
         });

@@ -10,6 +10,10 @@ import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -54,6 +58,7 @@ public class CheckInGUI {
         confermaButton.setBorder(new LineBorder(Color.black,3,false));
         tornaIndietroButton.setBorder(new LineBorder(Color.black,3,false));
         insertButton.setBorder(new LineBorder(Color.black,3,false));
+        removeButton.setEnabled(false);
 
         String[] columnNames = {"Tipo"};
         DefaultTableModel model = new DefaultTableModel(columnNames, 0);
@@ -87,6 +92,15 @@ public class CheckInGUI {
         UtilFunctionsForGUI.addTextFieldPlaceholder(nameField, "Nome");
         UtilFunctionsForGUI.addTextFieldPlaceholder(surnameField, "Cognome");
         UtilFunctionsForGUI.addTextFieldPlaceholder(secondNameField, "Secondo Nome");
+        confermaButton.setEnabled(false);
+
+        Map<JTextField, String> fields = new HashMap<>();
+        fields.put(nameField, "Nome");
+        fields.put(surnameField, "Cognome");
+        fields.put(cfField, "Codice Fiscale");
+        Set<JTextField> optional = new HashSet<>();
+        optional.add(secondNameField);
+        FormHelper.bindButtonToTextFields(confermaButton,fields,optional);
 
         UtilFunctionsForGUI.setupFrame(frame);
         frame.addWindowListener(new WindowAdapter() {
@@ -110,11 +124,26 @@ public class CheckInGUI {
             frame.dispose();
         });
         confermaButton.addActionListener(_ -> {
-            try {
-                controller.confermaPrenotazione(nameField.getText().trim(), secondNameField.getText().trim(), surnameField.getText().trim(), cfField.getText().trim(), table1);
-            } catch (SQLException ex) {
-                ErrorPanel.showErrorDialog(null,"Qualcosa è andato storto","Errore CheckIn");
-                Logger.getLogger(LoginGUI.class.getName()).log(Level.SEVERE, "Errore CheckIn", ex);
+            ConfirmDialog conferma = new ConfirmDialog(null, "Sei sicuro di procedere con la prenotazione?", "Conferma Prenotazione");
+            if (conferma.showDialog()) {
+                try {
+                    controller.confermaPrenotazione(nameField.getText().trim(), secondNameField.getText().trim(), surnameField.getText().trim(), cfField.getText().trim(), table1);
+                    JPanel panel = new JPanel();
+                    panel.setPreferredSize(new Dimension(1000, 100));
+                    JLabel label = new JLabel("Prenotazione avvenuta con successo!", SwingConstants.CENTER);
+                    label.setFont(new Font("Times New Roman", Font.BOLD, 36));
+                    panel.add(label);
+                    JOptionPane.showMessageDialog(null, panel, "Prenotazione riuscita", JOptionPane.INFORMATION_MESSAGE);
+                } catch (SQLException ex) {
+                    ErrorPanel.showErrorDialog(null,"Qualcosa è andato storto","Errore CheckIn");
+                    Logger.getLogger(LoginGUI.class.getName()).log(Level.SEVERE, "Errore CheckIn", ex);
+                }
+            }
+        });
+        table1.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) { // Per evitare eventi multipli
+                int selectedRow = table1.getSelectedRow();
+                removeButton.setEnabled(selectedRow != -1);
             }
         });
     }

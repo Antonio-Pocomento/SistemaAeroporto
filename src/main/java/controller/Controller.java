@@ -7,6 +7,7 @@ import custom_exceptions.UserNotFoundException;
 import dao.UtenteDAO;
 import dao.AmministratoreDAO;
 import dao.UtenteGenericoDAO;
+import gui.LoginGUI;
 import implementazioni_postgres_dao.UtenteGenericoImplementazionePostgresDAO;
 import implementazioni_postgres_dao.UtenteImplementazionePostgresDAO;
 import implementazioni_postgres_dao.AmministratoreImplementazionePostgresDAO;
@@ -21,13 +22,20 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Controller {
 
     private Utente utenteAutenticato;
+    UtenteDAO utenteDAO = new UtenteImplementazionePostgresDAO();
     AmministratoreDAO amministratoreDAO = new AmministratoreImplementazionePostgresDAO();
     UtenteGenericoDAO utenteGenericoDAO = new UtenteGenericoImplementazionePostgresDAO();
     String codiceVoloDaPrenotare;
+    private static final Random random = new Random();
+    private static final char[] sedili = {'A', 'B', 'C', 'D', 'E', 'F'};
+    private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy";
 
     String[] flightColumnNames = {
             "Codice", "Posti Disponibili", "Comp. Aerea", "Origine",
@@ -58,9 +66,12 @@ public class Controller {
     };
 
     String[] luggageColumnNames = {
-            "Codice", "Tipo", "Codice Fiscale Passeggero", "Stato"
+            "Codice", "Tipo", "Nome Passeggero", "Stato", "Codice Volo",
     };
-    DefaultTableModel luggageAdminTableModel = new DefaultTableModel(luggageColumnNames, 0) {
+    String[] luggageAdminColumnNames = {
+            "Codice", "Tipo", "Codice Fiscale Passeggero", "Stato", "Codice Volo",
+    };
+    DefaultTableModel luggageAdminTableModel = new DefaultTableModel(luggageAdminColumnNames, 0) {
         @Override
         public boolean isCellEditable(int row, int column) {
             return false;
@@ -77,38 +88,86 @@ public class Controller {
         try{
         utenteGenericoDAO.showFlights(flightsTableModel);
         return flightsTableModel;
-        } catch (SQLException ex) {return null;}
+        } catch (SQLException ex) {
+            Logger.getLogger(LoginGUI.class.getName()).log(Level.SEVERE, "Errore Creazione Tabella Voli per Utente Generico", ex);
+            return null;
+        }
     }
+
     public DefaultTableModel getFlightsAdminModel() {
-        try{
-        amministratoreDAO.showFlights(flightsAdminTableModel,(Amministratore) utenteAutenticato);
+        // Popola il modello con i dati da voliGestiti
+        flightsAdminTableModel.setRowCount(0);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT);
+        Amministratore admin = (Amministratore) utenteAutenticato;
+        for (Volo volo : admin.getVoliGestiti()) {
+            Object[] rowData = new Object[] {
+                    volo.getCodice(),
+                    volo.getPostiDisponibili(),
+                    volo.getCompagniaAerea(),
+                    volo.getAeroportoOrigine(),
+                    volo.getAeroportoDestinazione(),
+                    volo.getData().format(formatter),
+                    volo.getOrario(),
+                    volo.getRitardo(),
+                    volo.getStato(),
+                    volo.getNumeroGate()
+            };
+            flightsAdminTableModel.addRow(rowData);
+        }
         return flightsAdminTableModel;
-        } catch (SQLException ex) {return null;}
     }
+
     public DefaultTableModel getBagsTableModel() {
-        try{
-        utenteGenericoDAO.showLuggage(luggageTableModel, (UtenteGenerico) utenteAutenticato);
+        luggageTableModel.setRowCount(0);
+        UtenteGenerico utente = (UtenteGenerico) utenteAutenticato;
+        for (Prenotazione p : utente.getPrenotazioniUtente()) {
+            for(Bagaglio b : p.getPasseggero().getBagagli())
+            {
+                Object[] rowData = new Object[] {
+                        b.getCodiceVisualizzato(),
+                        b.getTipo(),
+                        p.getPasseggero().getNome(),
+                        b.getStato(),
+                        p.getVolo().getCodice(),
+                };
+                luggageTableModel.addRow(rowData);
+            }
+        }
         return luggageTableModel;
-        } catch (SQLException ex) {return null;}
     }
+
     public DefaultTableModel getBagsAdminTableModel() {
         try{
         amministratoreDAO.showLuggage(luggageAdminTableModel, (Amministratore) utenteAutenticato);
         return luggageAdminTableModel;
-        } catch (SQLException ex) {return null;}}
+        } catch (SQLException _) {return null;}}
+
     public DefaultTableModel getBookingTableModel() {
-        try{
-        utenteGenericoDAO.showReservations(bookingTableModel,(UtenteGenerico) utenteAutenticato);
+        // Popola il modello con i dati prenotazioniUtente
+        bookingTableModel.setRowCount(0);
+        UtenteGenerico utente = (UtenteGenerico) utenteAutenticato;
+        for (Prenotazione p : utente.getPrenotazioniUtente()) {
+            Object[] rowData = new Object[] {
+                    p.getNumeroBiglietto(),
+                    p.getPostoAssegnato(),
+                    p.getPasseggero().getNome(),
+                    p.getVolo().getCodice(),
+                    p.getStato(),
+            };
+            bookingTableModel.addRow(rowData);
+        }
         return bookingTableModel;
-        } catch (SQLException ex) {return null;}
     }
 
+    /* *******************************++++++++++++++++++++++++++++++++++ */
+    // UTENTE
+    /* *******************************++++++++++++++++++++++++++++++++++ */
+
     public void registraUtente(String nomeUtente, String email, char[] password) throws SQLException {
-        UtenteDAO rDAO = new UtenteImplementazionePostgresDAO();
-        if(!rDAO.esisteUtente(nomeUtente)) {
-            if(!rDAO.esisteEmail(email)) {
+        if(!utenteDAO.esisteUtente(nomeUtente)) {
+            if(!utenteDAO.esisteEmail(email)) {
                 UtenteGenerico utente = new UtenteGenerico(nomeUtente, email, new String(password).trim()); //in memoria
-                rDAO.registraUtente(utente); //su DB
+                utenteDAO.registraUtente(utente); //su DB
             }
             else throw new EmailAlreadyExistsException("È già presente un account che usa questa email");
         }
@@ -117,29 +176,32 @@ public class Controller {
     }
 
     public int loginUtente(String login, char[] password) throws SQLException {
-        UtenteDAO rDAO = new UtenteImplementazionePostgresDAO();
-        Utente utente = rDAO.loginUtente(login, new String(password).trim());
+        Utente utente = utenteDAO.loginUtente(login, new String(password).trim());
         if(utente == null) throw new UserNotFoundException("Utente non trovato");
 
         utenteAutenticato = utente;
-        if (utente instanceof Amministratore amministratore) {
-            amministratoreDAO.addFlights(amministratore);
-            return 1;
-        } else if (utente instanceof UtenteGenerico) {
-            return 0;
+        switch (utente) {
+            case Amministratore amministratore -> {
+                amministratoreDAO.addFlights(amministratore);
+                return 1;
+            }
+            case UtenteGenerico generico -> {
+                utenteGenericoDAO.caricaPrenotazioniUtente(generico);
+                return 0;
+            }
+            default -> throw new UserNotFoundException("Utente non trovato");
         }
-        else throw new UserNotFoundException("Utente non trovato");
     }
 
-    public void inserisciVolo(String codice, String posti, String compagnia, String aeroportoOrigine, String aeroportoDestinazione,
-                              String data, String orario, String numeroGate) throws SQLException {
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    /* *******************************++++++++++++++++++++++++++++++++++ */
+    // UTENTE GENERICO
+    /* *******************************++++++++++++++++++++++++++++++++++ */
 
-        Volo volo = new Volo(codice,safeParseInteger(posti),safeParseInteger(posti),compagnia,aeroportoOrigine,aeroportoDestinazione,LocalDate.parse(data, dateFormatter),
-                safeParseLocalTime(orario),null,StatoVolo.PROGRAMMATO,safeParseInteger(numeroGate));
-        Amministratore admin = (Amministratore) utenteAutenticato;
-        admin.gestisciVolo(volo);
-        amministratoreDAO.inserisciVolo(volo,admin);
+    public void logout() {
+        UtenteGenerico utente = (UtenteGenerico) utenteAutenticato;
+        utente.getPrenotazioniUtente().clear();
+        utenteAutenticato = null;
+        codiceVoloDaPrenotare = null;
     }
 
     public void iniziaPrenotazione(String codiceVolo){
@@ -148,14 +210,80 @@ public class Controller {
 
     public void confermaPrenotazione(String nome, String secNome, String cognome, String cf, JTable table) throws SQLException {
         List<String> tipiBagagli = new ArrayList<>();
-
+        Passeggero passeggero = new Passeggero(nome, secNome, cognome, cf);
+        UtenteGenerico utente = (UtenteGenerico) utenteAutenticato;
+        int newLuggageCode = utenteGenericoDAO.currentLuggageCode() + 1;
+        int newReservationCode = utenteGenericoDAO.currentReservationCode() + 1;
         for (int i = 0; i < table.getRowCount(); i++) {
             Object value = table.getValueAt(i, 0);
             if (value != null) {
                 tipiBagagli.add(value.toString());
+                Bagaglio bag = new Bagaglio(newLuggageCode++,passeggero,value.toString());
+                passeggero.addBagaglio(bag);
             }
         }
-        utenteGenericoDAO.confirmReservation(nome,secNome,cognome,cf,tipiBagagli,(UtenteGenerico) utenteAutenticato, codiceVoloDaPrenotare);
+        String postoAssegnato = generaPosto();
+        utenteGenericoDAO.confirmReservation(nome,secNome,cognome,cf,tipiBagagli, postoAssegnato,(UtenteGenerico) utenteAutenticato, codiceVoloDaPrenotare);
+        Prenotazione p = new Prenotazione(newReservationCode,postoAssegnato,utenteGenericoDAO.voloDaPrenotare(codiceVoloDaPrenotare),passeggero,utente);
+        utente.getPrenotazioniUtente().add(p);
+
+    }
+
+    public void modificaPrenotazione(int numeroBiglietto, String stato) throws SQLException{
+        UtenteGenerico utente = (UtenteGenerico) utenteAutenticato;
+        for(Prenotazione p : utente.getPrenotazioniUtente()) {
+            if(p.getNumeroBiglietto() == numeroBiglietto){
+                p.setStato(StatoPrenotazione.valueOf(stato.replace(" ", "_").toUpperCase()));
+            }
+        }
+        utenteGenericoDAO.modificaPrenotazione(numeroBiglietto, stato);
+    }
+
+    public void segnalaBagaglio(String codice) throws SQLException{
+        utenteGenericoDAO.segnalaBagaglio(codice);
+        UtenteGenerico utente = (UtenteGenerico) utenteAutenticato;
+        for(Prenotazione p : utente.getPrenotazioniUtente()) {
+            for(Bagaglio b : p.getPasseggero().getBagagli()){
+                if(b.getCodiceVisualizzato().equals(codice)){
+                    b.setStato(StatoBagaglio.SMARRITO);
+                }
+            }
+        }
+    }
+
+    public void cercaVolo(String codice, String posti, String compagnia, String aeroportoOrigine, String aeroportoDestinazione,
+                          String data, String orario, String ritardo, String stato, String numeroGate) throws SQLException {
+        utenteGenericoDAO.ricercaVolo(flightsTableModel, codice, posti,compagnia,
+                aeroportoOrigine,aeroportoDestinazione,data,orario,ritardo,stato,numeroGate);
+    }
+
+    public void cercaBagaglio(String codice, String tipo, String stato) throws SQLException {
+        utenteGenericoDAO.searchLuggage(luggageTableModel, (UtenteGenerico) utenteAutenticato,codice, tipo, stato);
+    }
+
+    public void cercaPrenotazione(String codiceVolo, String nomePasseggero) throws SQLException {
+        utenteGenericoDAO.ricercaPrenotazione(bookingTableModel, (UtenteGenerico) utenteAutenticato, codiceVolo, nomePasseggero);
+    }
+
+    /* *******************************++++++++++++++++++++++++++++++++++ */
+    // ADMIN
+    /* *******************************++++++++++++++++++++++++++++++++++ */
+
+    public void inserisciVolo(String codice, String posti, String compagnia, String aeroportoOrigine, String aeroportoDestinazione,
+                              String data, String orario, String numeroGate) throws SQLException {
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT);
+
+        Volo volo = new Volo(codice,safeParseInteger(posti),safeParseInteger(posti),compagnia,aeroportoOrigine,aeroportoDestinazione,LocalDate.parse(data, dateFormatter),
+                safeParseLocalTime(orario),null,StatoVolo.PROGRAMMATO,safeParseInteger(numeroGate));
+        Amministratore admin = (Amministratore) utenteAutenticato;
+        amministratoreDAO.inserisciVolo(volo,admin);
+        admin.gestisciVolo(volo);
+    }
+
+    public void logoutAdmin() {
+        Amministratore admin = (Amministratore) utenteAutenticato;
+        admin.getVoliGestiti().clear();
+        utenteAutenticato = null;
     }
 
     public void salvaModificheDaTabella(JTable table) throws ModifyTableException {
@@ -171,13 +299,15 @@ public class Controller {
                     v = volo;
                     if (Objects.equals(v.getCodice(), codice)) {
                         // aggiorna i campi del volo esistente
-                        // todo aggiungere altro
-                        admin.modificaPostiVolo(v,safeParseInteger(model.getValueAt(i, 1).toString()));
-                        admin.modificaDataVolo(v,LocalDate.parse(model.getValueAt(i, 5).toString(), DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                        admin.modificaPostiVolo(v,safeParseInteger(model.getValueAt(i, 1)));
+                        admin.modificaCompagniaVolo(v,model.getValueAt(i,2).toString());
+                        admin.modificaAeroportoOrigine(v,model.getValueAt(i,3).toString());
+                        admin.modificaAeroportoDestinazione(v,model.getValueAt(i,4).toString());
+                        admin.modificaDataVolo(v,LocalDate.parse(model.getValueAt(i, 5).toString(), DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT)));
                         admin.modificaOrarioVolo(v,LocalTime.parse(model.getValueAt(i, 6).toString()));
                         admin.modificaRitardoVolo(v,safeParseLocalTime(model.getValueAt(i, 7)));
                         admin.modificaStatoVolo(v,StatoVolo.valueOf(model.getValueAt(i, 8).toString().replace(" ", "_").toUpperCase()));
-                        admin.modificaNumeroGateVolo(v,safeParseInteger(model.getValueAt(i, 9).toString()));
+                        admin.modificaNumeroGateVolo(v, safeParseInteger(model.getValueAt(i, 9)));
 
                         amministratoreDAO.aggiornaVolo(v);
                         break;
@@ -194,41 +324,24 @@ public class Controller {
         amministratoreDAO.aggiornaStatoBagaglio(codice,nuovoStato);
     }
 
-    public void modificaPrenotazione(int numeroBiglietto, String stato) throws SQLException{
-        utenteGenericoDAO.modificaPrenotazione(numeroBiglietto, stato);
-    }
-
-    public void segnalaBagaglio(String codice) throws SQLException{
-        utenteGenericoDAO.segnalaBagaglio(codice);
-    }
-
-    public DefaultTableModel cercaVoloAdmin(String codice, String posti, String compagnia, String aeroportoOrigine, String aeroportoDestinazione,
-                                       String data, String orario, String ritardo, String stato, String numeroGate) throws SQLException {
+    public void cercaVoloAdmin(String codice, String posti, String compagnia, String aeroportoOrigine, String aeroportoDestinazione,
+                               String data, String orario, String ritardo, String stato, String numeroGate) throws SQLException {
         amministratoreDAO.ricercaVolo(flightsAdminTableModel,(Amministratore) utenteAutenticato, codice, posti,compagnia,
                 aeroportoOrigine,aeroportoDestinazione,data,orario,ritardo,stato,numeroGate);
-        return flightsAdminTableModel;
     }
 
-    public DefaultTableModel cercaVolo(String codice, String posti, String compagnia, String aeroportoOrigine, String aeroportoDestinazione,
-                                            String data, String orario, String ritardo, String stato, String numeroGate) throws SQLException {
-        utenteGenericoDAO.ricercaVolo(flightsTableModel, codice, posti,compagnia,
-                aeroportoOrigine,aeroportoDestinazione,data,orario,ritardo,stato,numeroGate);
-        return flightsTableModel;
-    }
-
-    public DefaultTableModel cercaBagaglioAdmin(String codice, String tipo, String stato) throws SQLException {
+    public void cercaBagaglioAdmin(String codice, String tipo, String stato) throws SQLException {
         amministratoreDAO.searchLuggage(luggageAdminTableModel, (Amministratore) utenteAutenticato,codice, tipo, stato);
-        return luggageAdminTableModel;
     }
 
-    public DefaultTableModel cercaBagaglio(String codice, String tipo, String stato) throws SQLException {
-        utenteGenericoDAO.searchLuggage(luggageTableModel, (UtenteGenerico) utenteAutenticato,codice, tipo, stato);
-        return luggageTableModel;
-    }
+    /* *******************************++++++++++++++++++++++++++++++++++ */
+    // UTILITY
+    /* *******************************++++++++++++++++++++++++++++++++++ */
 
-    public DefaultTableModel cercaPrenotazione(String codiceVolo, String nomePasseggero) throws SQLException {
-        utenteGenericoDAO.ricercaPrenotazione(bookingTableModel, (UtenteGenerico) utenteAutenticato, codiceVolo, nomePasseggero);
-        return bookingTableModel;
+    public static String generaPosto() {
+        int fila = random.nextInt(30) + 1; // file da 1 a 30
+        char sedile = sedili[random.nextInt(sedili.length)];
+        return String.format("%d%c", fila, sedile);
     }
 
     public boolean canPressRegister(String nomeUtente, String email, char[] password, char[] confirmPassword) {
@@ -249,8 +362,8 @@ public class Controller {
     private Integer safeParseInteger(Object value) {
         if (value != null && !value.toString().isBlank()) {
             try {
-                return Integer.parseInt(value.toString());
-            } catch (NumberFormatException e) {
+                return Integer.valueOf(value.toString());
+            } catch (NumberFormatException _) {
                 return null;
             }
         }

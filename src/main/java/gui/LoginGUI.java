@@ -9,6 +9,10 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -52,6 +56,11 @@ public class LoginGUI {
         passwordField.setBorder(new LineBorder(Color.black,2,false));
         loginButton.setBorder(new LineBorder(Color.black,3,false));
         returnButton.setBorder(new LineBorder(Color.black,3,false));
+        Map<JTextField, String> fields = new HashMap<>();
+        fields.put(userField, DEFAULT_USERFIELD_TEXT);
+        fields.put(passwordField, DEFAULT_PASSWORDFIELD_TEXT);
+        Set<JTextField> optional = new HashSet<>();
+        FormHelper.bindButtonToTextFields(loginButton,fields,optional);
 
         passwordField.setEchoChar((char) 0);
 
