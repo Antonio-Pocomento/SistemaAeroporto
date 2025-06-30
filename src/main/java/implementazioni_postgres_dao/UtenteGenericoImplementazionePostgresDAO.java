@@ -170,7 +170,9 @@ public class UtenteGenericoImplementazionePostgresDAO extends UserUtilFunctionsF
             conn.setAutoCommit(false);
             try {
                 if(!passeggeroExists(conn,codiceFiscale))
+                {
                     addPassenger(conn, nome, secondoNome, cognome, codiceFiscale);
+                }
                 addReservation(conn, codiceVolo, utente.getNomeUtente(), codiceFiscale, posto);
                 for(String tipo : tipiBagagli) {
                     addBagaglio(conn,tipo,codiceFiscale);

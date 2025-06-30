@@ -40,7 +40,6 @@ public class AmministratoreImplementazionePostgresDAO extends UserUtilFunctionsF
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, admin.getNomeUtente());
             luggageModel.setRowCount(0);
-            luggageModel.setRowCount(0);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     Object[] row = {

@@ -308,7 +308,6 @@ public class Controller {
                         admin.modificaRitardoVolo(v,safeParseLocalTime(model.getValueAt(i, 7)));
                         admin.modificaStatoVolo(v,StatoVolo.valueOf(model.getValueAt(i, 8).toString().replace(" ", "_").toUpperCase()));
                         admin.modificaNumeroGateVolo(v, safeParseInteger(model.getValueAt(i, 9)));
-
                         amministratoreDAO.aggiornaVolo(v);
                         break;
                     }

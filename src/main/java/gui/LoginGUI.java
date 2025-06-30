@@ -56,6 +56,7 @@ public class LoginGUI {
         passwordField.setBorder(new LineBorder(Color.black,2,false));
         loginButton.setBorder(new LineBorder(Color.black,3,false));
         returnButton.setBorder(new LineBorder(Color.black,3,false));
+
         Map<JTextField, String> fields = new HashMap<>();
         fields.put(userField, DEFAULT_USERFIELD_TEXT);
         fields.put(passwordField, DEFAULT_PASSWORDFIELD_TEXT);
