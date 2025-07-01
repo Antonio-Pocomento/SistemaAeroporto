@@ -37,48 +37,12 @@ public class UtenteGenericoImplementazionePostgresDAO extends UserUtilFunctionsF
 
     public void modificaPrenotazione(int numeroBiglietto, String stato) throws SQLException{
         String updatePrenotazione = "UPDATE prenotazione SET stato = ?::stato_prenotazione WHERE numero_biglietto = ?";
-        String selectCodiceVolo = "SELECT codice_volo FROM prenotazione WHERE numero_biglietto = ?";
-        String increasePosti = "UPDATE volo SET posti_disponibili = posti_disponibili + 1 WHERE codice = ?";
 
-        Connection conn = ConnessioneDatabase.getInstance().connection;
-        try {
-            conn.setAutoCommit(false);
-
-            String statoFormatted = stato.replace(" ", "_").toUpperCase();
-
-            // Se stato = "CANCELLATA"
-            String codiceVolo = null;
-            if ("CANCELLATA".equals(statoFormatted)) {
-                try (PreparedStatement ps = conn.prepareStatement(selectCodiceVolo)) {
-                    ps.setInt(1, numeroBiglietto);
-                    try (ResultSet rs = ps.executeQuery()) {
-                        if (rs.next()) {
-                            codiceVolo = rs.getString("codice_volo");
-                        }
-                    }
-                }
-            }
-
-            // Aggiorna stato prenotazione
-            try (PreparedStatement stmt = conn.prepareStatement(updatePrenotazione)) {
-                stmt.setString(1, statoFormatted);
-                stmt.setInt(2, numeroBiglietto);
-                stmt.executeUpdate();
-            }
-
-            // Se cancellata, aumenta posti
-            if ("CANCELLATA".equals(statoFormatted)) {
-                try (PreparedStatement ps = conn.prepareStatement(increasePosti)) {
-                    ps.setString(1, codiceVolo);
-                    ps.executeUpdate();
-                }
-            }
-            conn.commit();
-        } catch (SQLException e) {
-            conn.rollback();
-            throw e;
-        } finally {
-            conn.setAutoCommit(true);
+        try (Connection conn = ConnessioneDatabase.getInstance().connection;
+             PreparedStatement stmt = conn.prepareStatement(updatePrenotazione)) {
+            stmt.setString(1, stato.replace(" ", "_").toUpperCase());
+            stmt.setInt(2, numeroBiglietto);
+            stmt.executeUpdate();
         }
     }
 
@@ -177,7 +141,6 @@ public class UtenteGenericoImplementazionePostgresDAO extends UserUtilFunctionsF
                 for(String tipo : tipiBagagli) {
                     addBagaglio(conn,tipo,codiceFiscale);
                 }
-                decreaseSeat(conn,codiceVolo);
                 conn.commit();
             } catch (SQLException e) {
                 conn.rollback();
@@ -211,15 +174,6 @@ public class UtenteGenericoImplementazionePostgresDAO extends UserUtilFunctionsF
                 stmt.setString(3, secondoNome);
             stmt.setString(4, cognome);
             stmt.executeUpdate();
-        }
-    }
-
-    private void decreaseSeat(Connection conn, String codiceVolo) throws SQLException {
-        String update = "UPDATE volo SET posti_disponibili = GREATEST(posti_disponibili - 1, 0) WHERE codice = ?";
-
-        try (PreparedStatement ps = conn.prepareStatement(update)) {
-            ps.setString(1, codiceVolo);
-            ps.executeUpdate();
         }
     }
 
