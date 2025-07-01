@@ -170,6 +170,7 @@
                       <font name="Times New Roman" size="24" style="0"/>
                       <model>
                         <item value=""/>
+                        <item value="Registrato"/>
                         <item value="Caricato"/>
                         <item value="Ritirabile"/>
                         <item value="Smarrito"/>

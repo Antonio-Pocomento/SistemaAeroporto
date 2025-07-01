@@ -238,7 +238,7 @@ public class UtenteGenericoImplementazionePostgresDAO extends UserUtilFunctionsF
     private void addBagaglio(Connection conn, String tipo, String codiceFiscale) throws SQLException {
         String sql = "INSERT INTO bagaglio (stato, tipo ,codice_fiscale_passeggero) VALUES (?::stato_bagaglio, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, "CARICATO");
+            stmt.setString(1, "REGISTRATO");
             stmt.setString(2, tipo);
             stmt.setString(3, codiceFiscale);
             stmt.executeUpdate();
