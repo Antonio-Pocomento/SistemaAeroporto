@@ -59,6 +59,7 @@ public class CheckInGUI {
         tornaIndietroButton.setBorder(new LineBorder(Color.black,3,false));
         insertButton.setBorder(new LineBorder(Color.black,3,false));
         removeButton.setEnabled(false);
+        UtilFunctionsForGUI.disallowSpaces(cfField);
 
         String[] columnNames = {"Tipo"};
         DefaultTableModel model = new DefaultTableModel(columnNames, 0);
