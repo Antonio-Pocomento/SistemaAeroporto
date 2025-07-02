@@ -11,7 +11,7 @@ import java.sql.*;
 public class UtenteImplementazionePostgresDAO implements UtenteDAO {
 
     public boolean esisteUtente(String nomeUtente) throws SQLException {
-        String sql = "SELECT nomeUtente FROM Utente WHERE nomeUtente = ?";
+        String sql = "SELECT 1 FROM Utente WHERE nomeUtente = ?";
         try (Connection conn = ConnessioneDatabase.getInstance().connection;
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, nomeUtente);
@@ -21,7 +21,7 @@ public class UtenteImplementazionePostgresDAO implements UtenteDAO {
     }
 
     public boolean esisteEmail(String email) throws SQLException {
-        String sql = "SELECT email FROM Utente WHERE email = ?";
+        String sql = "SELECT 1 FROM Utente WHERE email = ?";
         try (Connection conn = ConnessioneDatabase.getInstance().connection;
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, email);
@@ -31,7 +31,7 @@ public class UtenteImplementazionePostgresDAO implements UtenteDAO {
     }
 
     public Utente loginUtente(String login, String passwordInput) throws SQLException {
-        String sql = "SELECT nomeUtente, email, passwordUtente FROM Utente WHERE (nomeUtente = ? OR email = ?) AND passwordUtente = ?";
+        String sql = "SELECT nomeUtente, email, passwordUtente, ruolo FROM Utente WHERE (nomeUtente = ? OR email = ?) AND passwordUtente = ?";
         try (Connection conn = ConnessioneDatabase.getInstance().connection;
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, login);
@@ -45,9 +45,9 @@ public class UtenteImplementazionePostgresDAO implements UtenteDAO {
                     String password = rs.getString("passwordUtente");
 
                     // Determina il ruolo
-                    if (isAmministratore(nomeUtente, conn)) {
+                    if (rs.getString("ruolo").equals("amministratore")) {
                         return new Amministratore(nomeUtente, email, password);
-                    } else if (isUtenteGenerico(nomeUtente, conn)) {
+                    } else if (rs.getString("ruolo").equals("generico")) {
                         return new UtenteGenerico(nomeUtente, email, password);
                     } else {
                         return null; // Nessun ruolo valido trovato
@@ -78,22 +78,23 @@ public class UtenteImplementazionePostgresDAO implements UtenteDAO {
     }
 
     public void registraUtente(Utente utente) throws SQLException {
-        String insertUtente = "INSERT INTO Utente (nomeUtente, email, passwordUtente) VALUES (?, ?, ?)";
-        String insertGenerico = "INSERT INTO UtenteGenerico (nomeUtente) VALUES (?)";
+        String insertUtente = "INSERT INTO Utente (nomeUtente, email, passwordUtente, ruolo) VALUES (?, ?, ?, ?::ruolo_utente)";
+        //String insertGenerico = "INSERT INTO UtenteGenerico (nomeUtente) VALUES (?)";
 
         try (Connection conn = ConnessioneDatabase.getInstance().connection) {
             conn.setAutoCommit(false);
 
             try (PreparedStatement stmt1 = conn.prepareStatement(insertUtente);
-                 PreparedStatement stmt2 = conn.prepareStatement(insertGenerico)) {
+                 /*PreparedStatement stmt2 = conn.prepareStatement(insertGenerico)*/) {
 
                 stmt1.setString(1, utente.getNomeUtente());
                 stmt1.setString(2, utente.getEmail());
                 stmt1.setString(3, utente.getPasswordUtente());
+                stmt1.setString(4, "generico");
                 stmt1.executeUpdate();
 
-                stmt2.setString(1, utente.getNomeUtente());
-                stmt2.executeUpdate();
+                //stmt2.setString(1, utente.getNomeUtente());
+                //stmt2.executeUpdate();
 
                 conn.commit();
             } catch (SQLException e) {

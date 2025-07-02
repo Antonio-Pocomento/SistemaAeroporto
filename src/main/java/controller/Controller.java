@@ -19,10 +19,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -230,13 +227,20 @@ public class Controller {
     }
 
     public void modificaPrenotazione(int numeroBiglietto, String stato) throws SQLException{
+        utenteGenericoDAO.modificaPrenotazione(numeroBiglietto, stato);
         UtenteGenerico utente = (UtenteGenerico) utenteAutenticato;
         for(Prenotazione p : utente.getPrenotazioniUtente()) {
             if(p.getNumeroBiglietto() == numeroBiglietto){
                 p.setStato(StatoPrenotazione.valueOf(stato.replace(" ", "_").toUpperCase()));
+                if(stato.equals("Cancellata")){
+                    Iterator<Bagaglio> it = p.getPasseggero().getBagagli().iterator();
+                    while (it.hasNext()) {
+                        it.next();
+                        it.remove();
+                    }
+                }
             }
         }
-        utenteGenericoDAO.modificaPrenotazione(numeroBiglietto, stato);
     }
 
     public void segnalaBagaglio(String codice) throws SQLException{

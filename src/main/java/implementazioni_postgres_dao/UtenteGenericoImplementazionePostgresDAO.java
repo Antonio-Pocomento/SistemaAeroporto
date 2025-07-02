@@ -6,10 +6,7 @@ import model.*;
 
 import javax.swing.table.DefaultTableModel;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class UtenteGenericoImplementazionePostgresDAO extends UserUtilFunctionsForDAO implements UtenteGenericoDAO {
 
@@ -139,7 +136,7 @@ public class UtenteGenericoImplementazionePostgresDAO extends UserUtilFunctionsF
                 }
                 addReservation(conn, codiceVolo, utente.getNomeUtente(), codiceFiscale, posto);
                 for(String tipo : tipiBagagli) {
-                    addBagaglio(conn,tipo,codiceFiscale);
+                    addBagaglio(conn,tipo,codiceFiscale, codiceVolo);
                 }
                 conn.commit();
             } catch (SQLException e) {
@@ -189,12 +186,13 @@ public class UtenteGenericoImplementazionePostgresDAO extends UserUtilFunctionsF
         }
     }
 
-    private void addBagaglio(Connection conn, String tipo, String codiceFiscale) throws SQLException {
-        String sql = "INSERT INTO bagaglio (stato, tipo ,codice_fiscale_passeggero) VALUES (?::stato_bagaglio, ?, ?)";
+    private void addBagaglio(Connection conn, String tipo, String codiceFiscale, String codiceVolo) throws SQLException {
+        String sql = "INSERT INTO bagaglio (stato, tipo ,codice_fiscale_passeggero, codice_volo) VALUES (?::stato_bagaglio, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, "REGISTRATO");
             stmt.setString(2, tipo);
             stmt.setString(3, codiceFiscale);
+            stmt.setString(4, codiceVolo);
             stmt.executeUpdate();
         }
     }
@@ -229,7 +227,7 @@ public class UtenteGenericoImplementazionePostgresDAO extends UserUtilFunctionsF
                         "pa.nome, pa.secondo_nome, pa.cognome, pa.codice_fiscale, " +
                         "v.codice AS codice_volo, v.n_posti, v.posti_disponibili, v.compagnia_aerea, " +
                         "v.aeroporto_origine, v.aeroporto_destinazione, v.data, v.orario, v.ritardo, v.stato AS stato_volo, v.numero_gate, " +
-                        "b.codice AS codice_bagaglio, b.stato AS stato_bagaglio, b.tipo " +
+                        "b.codice AS codice_bagaglio, b.stato AS stato_bagaglio, b.tipo, b.codice_volo AS codice_volo_bagaglio " +
                         "FROM prenotazione pr " +
                         "JOIN passeggero pa ON pr.codice_fiscale = pa.codice_fiscale " +
                         "JOIN volo v ON pr.codice_volo = v.codice " +
@@ -284,7 +282,8 @@ public class UtenteGenericoImplementazionePostgresDAO extends UserUtilFunctionsF
                     prenotazione.setStato(StatoPrenotazione.valueOf(rs.getString("stato_prenotazione")));
 
                     int codiceBagaglio = rs.getInt("codice_bagaglio");
-                    if (codiceBagaglio > 0) {
+                    if (codiceBagaglio > 0 && rs.getString("codice_volo").equals(rs.getString("codice_volo_bagaglio"))
+                            && !rs.getString("stato_prenotazione").equals("CANCELLATA")) {
                         Bagaglio bagaglio = new Bagaglio(
                                 codiceBagaglio,
                                 passeggero,
@@ -301,13 +300,16 @@ public class UtenteGenericoImplementazionePostgresDAO extends UserUtilFunctionsF
                 {
                     // Bagagli (se presenti)
                     int codiceBagaglio = rs.getInt("codice_bagaglio");
-                    Bagaglio bagaglio = new Bagaglio(
-                            codiceBagaglio,
-                            prenotazione.getPasseggero(),
-                            rs.getString("tipo")
-                    );
-                    prenotazione.getPasseggero().getBagagli().add(bagaglio);
-                    bagaglio.setStato(StatoBagaglio.valueOf(rs.getString("stato_bagaglio")));
+                    if(codiceBagaglio > 0 && rs.getString("codice_volo").equals(rs.getString("codice_volo_bagaglio"))
+                            && !rs.getString("stato_prenotazione").equals("CANCELLATA")) {
+                        Bagaglio bagaglio = new Bagaglio(
+                                codiceBagaglio,
+                                prenotazione.getPasseggero(),
+                                rs.getString("tipo")
+                        );
+                        prenotazione.getPasseggero().getBagagli().add(bagaglio);
+                        bagaglio.setStato(StatoBagaglio.valueOf(rs.getString("stato_bagaglio")));
+                    }
                 }
             }
 
