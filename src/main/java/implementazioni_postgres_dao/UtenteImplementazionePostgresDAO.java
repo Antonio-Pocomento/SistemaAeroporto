@@ -59,42 +59,19 @@ public class UtenteImplementazionePostgresDAO implements UtenteDAO {
         }
     }
 
-    private boolean isAmministratore(String nomeUtente, Connection conn) throws SQLException {
-        String sql = "SELECT 1 FROM Amministratore WHERE nomeUtente = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, nomeUtente);
-            ResultSet rs = ps.executeQuery();
-            return rs.next();
-        }
-    }
-
-    private boolean isUtenteGenerico(String nomeUtente, Connection conn) throws SQLException {
-        String sql = "SELECT 1 FROM UtenteGenerico WHERE nomeUtente = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, nomeUtente);
-            ResultSet rs = ps.executeQuery();
-            return rs.next();
-        }
-    }
-
     public void registraUtente(Utente utente) throws SQLException {
         String insertUtente = "INSERT INTO Utente (nomeUtente, email, passwordUtente, ruolo) VALUES (?, ?, ?, ?::ruolo_utente)";
-        //String insertGenerico = "INSERT INTO UtenteGenerico (nomeUtente) VALUES (?)";
 
         try (Connection conn = ConnessioneDatabase.getInstance().connection) {
             conn.setAutoCommit(false);
 
-            try (PreparedStatement stmt1 = conn.prepareStatement(insertUtente);
-                 /*PreparedStatement stmt2 = conn.prepareStatement(insertGenerico)*/) {
+            try (PreparedStatement stmt1 = conn.prepareStatement(insertUtente)) {
 
                 stmt1.setString(1, utente.getNomeUtente());
                 stmt1.setString(2, utente.getEmail());
                 stmt1.setString(3, utente.getPasswordUtente());
                 stmt1.setString(4, "generico");
                 stmt1.executeUpdate();
-
-                //stmt2.setString(1, utente.getNomeUtente());
-                //stmt2.executeUpdate();
 
                 conn.commit();
             } catch (SQLException e) {
