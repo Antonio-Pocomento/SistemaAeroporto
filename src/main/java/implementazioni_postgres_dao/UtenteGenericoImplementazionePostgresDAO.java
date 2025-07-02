@@ -231,7 +231,7 @@ public class UtenteGenericoImplementazionePostgresDAO extends UserUtilFunctionsF
                         "FROM prenotazione pr " +
                         "JOIN passeggero pa ON pr.codice_fiscale = pa.codice_fiscale " +
                         "JOIN volo v ON pr.codice_volo = v.codice " +
-                        "LEFT JOIN bagaglio b ON b.codice_fiscale_passeggero = pa.codice_fiscale " +
+                        "LEFT JOIN bagaglio b ON b.codice_fiscale_passeggero = pa.codice_fiscale AND b.codice_volo = pr.codice_volo " +
                         "WHERE pr.nome_utente = ? " +
                         "ORDER BY pr.numero_biglietto";
 
@@ -282,8 +282,7 @@ public class UtenteGenericoImplementazionePostgresDAO extends UserUtilFunctionsF
                     prenotazione.setStato(StatoPrenotazione.valueOf(rs.getString("stato_prenotazione")));
 
                     int codiceBagaglio = rs.getInt("codice_bagaglio");
-                    if (codiceBagaglio > 0 && rs.getString("codice_volo").equals(rs.getString("codice_volo_bagaglio"))
-                            && !rs.getString("stato_prenotazione").equals("CANCELLATA")) {
+                    if (codiceBagaglio > 0 && !rs.getString("stato_prenotazione").equals("CANCELLATA")) {
                         Bagaglio bagaglio = new Bagaglio(
                                 codiceBagaglio,
                                 passeggero,
@@ -300,8 +299,7 @@ public class UtenteGenericoImplementazionePostgresDAO extends UserUtilFunctionsF
                 {
                     // Bagagli (se presenti)
                     int codiceBagaglio = rs.getInt("codice_bagaglio");
-                    if(codiceBagaglio > 0 && rs.getString("codice_volo").equals(rs.getString("codice_volo_bagaglio"))
-                            && !rs.getString("stato_prenotazione").equals("CANCELLATA")) {
+                    if(codiceBagaglio > 0 && !rs.getString("stato_prenotazione").equals("CANCELLATA")) {
                         Bagaglio bagaglio = new Bagaglio(
                                 codiceBagaglio,
                                 prenotazione.getPasseggero(),

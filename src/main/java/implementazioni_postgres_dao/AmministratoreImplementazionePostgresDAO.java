@@ -33,7 +33,8 @@ public class AmministratoreImplementazionePostgresDAO extends UserUtilFunctionsF
 
     public void showLuggage(DefaultTableModel luggageModel, Amministratore admin) throws SQLException {
         String sql = "SELECT B.codice, B.stato, B.tipo, B.codice_fiscale_passeggero, P.codice_volo " +
-                "FROM bagaglio B JOIN prenotazione P ON B.codice_fiscale_passeggero = P.codice_fiscale JOIN volo V ON P.codice_volo = V.codice " +
+                "FROM bagaglio B JOIN prenotazione P ON B.codice_fiscale_passeggero = P.codice_fiscale AND B.codice_volo = P.codice_volo " +
+                "JOIN volo V ON P.codice_volo = V.codice " +
                 "WHERE V.amministratore = ?";
 
         try (Connection conn = ConnessioneDatabase.getInstance().connection;

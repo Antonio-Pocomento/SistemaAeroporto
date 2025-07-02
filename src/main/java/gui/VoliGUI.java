@@ -38,8 +38,9 @@ public class VoliGUI {
                 ErrorPanel.showErrorDialog(null,"I posti disponibili per questo volo sono esauriti.",DEFAULT_ERROR_TEXT);
             } else if (!table1.getValueAt(table1.getSelectedRow(), 3).equals("Napoli")) {
                 ErrorPanel.showErrorDialog(null,"Non è possibile prenotarsi per voli in arrivo.",DEFAULT_ERROR_TEXT);
-            } else if(table1.getValueAt(table1.getSelectedRow(), 8).equals("Cancellato")) {
-                ErrorPanel.showErrorDialog(null,"Non è possibile prenotarsi per voli cancellati.",DEFAULT_ERROR_TEXT);
+            } else if(table1.getValueAt(table1.getSelectedRow(), 8).equals("Cancellato") ||
+                    table1.getValueAt(table1.getSelectedRow(), 8).equals("Decollato")) {
+                ErrorPanel.showErrorDialog(null,"Non è possibile prenotarsi per voli cancellati o decollati.",DEFAULT_ERROR_TEXT);
             } else {
                     CheckInGUI checkGUI = new CheckInGUI(frame, controller);
                     controller.iniziaPrenotazione((String) table1.getValueAt(table1.getSelectedRow(), 0));
