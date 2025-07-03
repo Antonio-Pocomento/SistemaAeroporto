@@ -3,9 +3,21 @@ package model;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+/**
+ *  Stato del bagaglio.
+ */
 public enum StatoBagaglio {
+    /**
+     * Il bagaglio è caricato.
+     */
     CARICATO,
+    /**
+     * Il bagaglio è ritirabile.
+     */
     RITIRABILE,
+    /**
+     * Il bagaglio è smarrito.
+     */
     SMARRITO;
 
     @Override

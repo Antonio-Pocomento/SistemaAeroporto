@@ -13,6 +13,9 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * La classe {@code InserisciVoloGUI}
+ */
 public class InserisciVoloGUI {
     private JPanel insertFlightPanel;
     private JPanel contentPanel;
@@ -37,6 +40,12 @@ public class InserisciVoloGUI {
     private static final String DEFAULT_SEATFIELD_TEXT = "Posti";
     private static final String DEFAULT_GATEFIELD_TEXT = "Numero Gate";
 
+    /**
+     * Costruttore della classe {@code InserisciVoloGUI}
+     *
+     * @param frameChiamante il frame chiamante
+     * @param controller     il controller
+     */
     public InserisciVoloGUI(Frame frameChiamante, Controller controller) {
         UtilFunctionsForGUI.setupLayoutAndBackground(frame,insertFlightPanel);
 

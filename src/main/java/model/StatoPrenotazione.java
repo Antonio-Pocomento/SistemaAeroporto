@@ -3,9 +3,21 @@ package model;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+/**
+ * Lo stato della prenotazione.
+ */
 public enum StatoPrenotazione {
+    /**
+     * Prenotazione confermata.
+     */
     CONFERMATA,
+    /**
+     * Prenotazione in attesa.
+     */
     IN_ATTESA,
+    /**
+     * Prenotazione cancellata.
+     */
     CANCELLATA;
 
     @Override

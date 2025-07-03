@@ -3,11 +3,29 @@ package model;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+/**
+ * Lo stato del volo.
+ */
 public enum StatoVolo {
+    /**
+     * Volo programmato.
+     */
     PROGRAMMATO,
+    /**
+     * Volo in ritardo.
+     */
     IN_RITARDO,
+    /**
+     * Volo atterrato.
+     */
     ATTERRATO,
+    /**
+     * Volo decollato.
+     */
     DECOLLATO,
+    /**
+     * Volo cancellato.
+     */
     CANCELLATO;
 
     @Override

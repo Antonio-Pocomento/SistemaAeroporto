@@ -3,10 +3,18 @@ package gui;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * La classe {@code BasicBackgroundPanel} rappresenta un background.
+ */
 public class BasicBackgroundPanel extends JPanel
 {
     private final transient Image backgroundImage;
 
+    /**
+     * Costruttore della classe BasicBackgroundPanel.
+     *
+     * @param backgroundImage l'immagine di background
+     */
     public BasicBackgroundPanel(Image backgroundImage)
     {
         this.backgroundImage = backgroundImage;

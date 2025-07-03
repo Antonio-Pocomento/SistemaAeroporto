@@ -16,6 +16,9 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * La classe {@code LoginGUI}
+ */
 public class LoginGUI {
     public final JFrame frame = new JFrame(LOGIN_TEXT);
     private JPanel loginPanel;
@@ -45,6 +48,12 @@ public class LoginGUI {
         frame.setVisible(false);
     }
 
+    /**
+     * Costruttore della classe {@code LoginGUI}
+     *
+     * @param frameChiamante il frame chiamante
+     * @param controller     il controller
+     */
     public LoginGUI(JFrame frameChiamante, Controller controller) {
         UtilFunctionsForGUI.setupLayoutAndBackground(frame,loginPanel);
 

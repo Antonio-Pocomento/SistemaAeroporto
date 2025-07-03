@@ -17,6 +17,9 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * La classe {@code CheckInGUI}
+ */
 public class CheckInGUI {
     public final JFrame frame = new JFrame("CheckIn");
     private JPanel checkInPanel;
@@ -40,6 +43,12 @@ public class CheckInGUI {
     private JButton tornaIndietroButton;
     private static final String USER_ICON_PATH = "src/main/images/userNameIcon.png";
 
+    /**
+     * Costruttore della classe {@code CheckInGUI}
+     *
+     * @param frameChiamante il frame chiamante
+     * @param controller     il controller
+     */
     public CheckInGUI(JFrame frameChiamante, Controller controller) {
         UtilFunctionsForGUI.setupLayoutAndBackground(frame,checkInPanel);
 

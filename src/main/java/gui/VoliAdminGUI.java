@@ -11,6 +11,9 @@ import java.awt.event.ComponentEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * La classe {@code VoliAdminGUI}
+ */
 public class VoliAdminGUI {
     public final JFrame frame = new JFrame("Voli Admin");
     private JPanel voliAdminPanel;
@@ -22,6 +25,12 @@ public class VoliAdminGUI {
     private JButton insertButton;
     private JButton cercaVoloButton;
 
+    /**
+     * Costruttore della classe {@code VoliAdminGUI}
+     *
+     * @param frameChiamante il frame chiamante
+     * @param controller     il controller
+     */
     public VoliAdminGUI(JFrame frameChiamante, Controller controller) {
         UtilFunctionsForGUI.setupLayoutAndBackground(frame,voliAdminPanel);
         TableSetter.setupFlightTable(table1, tablePanel, tableBackgroundPanel, controller.getFlightsAdminModel(),10);

@@ -4,6 +4,9 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
+/**
+ * La classe {@code CustomFlightCellRenderer} si occupa di evidenziare nella GUI i voli in ritardo o Cancellati.
+ */
 class CustomFlightCellRenderer extends DefaultTableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(

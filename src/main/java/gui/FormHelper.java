@@ -10,10 +10,23 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * La classe {@code FormHelper}
+ */
 public class FormHelper {
 
+    /**
+     * Costruttore FormHelper
+     */
     FormHelper() {}
 
+    /**
+     * Associa i bottoni ai textField corrispondenti  .
+     *
+     * @param button         bottone
+     * @param fieldDefaults  field defaults
+     * @param optionalFields optional fields
+     */
     public static void bindButtonToTextFields(JButton button,
                                               Map<JTextField, String> fieldDefaults,
                                               Set<JTextField> optionalFields) {
@@ -42,6 +55,22 @@ public class FormHelper {
         listener.insertUpdate(null);
     }
 
+    /**
+     * Associazione listeners
+     *
+     * @param usernameField             campo username
+     * @param emailField                campo email
+     * @param passwordField             campo password field
+     * @param confirmPasswordField      campo di conferma password
+     * @param usernameErrMessage        messaggio di errore username
+     * @param emailErrMessage           messaggio di errore email
+     * @param passwordRating            valutazione password
+     * @param confirmPasswordErrMessage messaggio di errore confirm password
+     * @param registerButton            bottone di registrazione
+     * @param controller                controller
+     * @param defaultUsernameText       testo di default username
+     * @param defaultPasswordText       testo di default password
+     */
     public static void bindFormListeners(
             JTextField usernameField,
             JTextField emailField,

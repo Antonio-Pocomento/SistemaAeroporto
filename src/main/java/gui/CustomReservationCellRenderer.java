@@ -4,6 +4,9 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
+/**
+ * La classe {@code CustomReservationCellRenderer} si occupa di evidenziare nella GUI le prenotazioni cancellate.
+ */
 public class CustomReservationCellRenderer extends DefaultTableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(

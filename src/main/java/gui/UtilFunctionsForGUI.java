@@ -6,9 +6,17 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.Arrays;
 
+/**
+ * la classe {@code UtilFunctionsForGUI}
+ */
 public class UtilFunctionsForGUI {
     private UtilFunctionsForGUI() {}
 
+    /**
+     *  {@code addHoverEffect}
+     *
+     * @param button il button
+     */
     public static void addHoverEffect(JButton button) {
         button.addMouseListener(new MouseAdapter() {
             @Override
@@ -25,6 +33,11 @@ public class UtilFunctionsForGUI {
         });
     }
 
+    /**
+     *  {@code setupFrame}
+     *
+     * @param frame il frame
+     */
     public static void setupFrame(JFrame frame) {
         // imposta chiusura
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

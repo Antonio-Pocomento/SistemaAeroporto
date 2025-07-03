@@ -12,6 +12,9 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * la classe {@code CercaVoloAdminGUI}
+ */
 public class CercaVoloAdminGUI {
     private JPanel cercaVoloPanel;
     private JPanel contentPanel;
@@ -43,6 +46,12 @@ public class CercaVoloAdminGUI {
     private static final String DEFAULT_DELAYFIELD_TEXT = "Ritardo Volo (HH:MM)";
     private static final String DEFAULT_GATEFIELD_TEXT = "Numero Gate";
 
+    /**
+     * Costruttore della classe {@code CercaVoloAdminGUI}
+     *
+     * @param frameChiamante il frame chiamante
+     * @param controller     il controller
+     */
     public CercaVoloAdminGUI(JFrame frameChiamante,Controller controller) {
         UtilFunctionsForGUI.setupLayoutAndBackground(frame,cercaVoloPanel);
 

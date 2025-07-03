@@ -8,6 +8,9 @@ import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
+/**
+ * La classe {@code VoliGUI}
+ */
 public class VoliGUI {
     public final JFrame frame = new JFrame("Voli");
     private JPanel voliPanel;
@@ -19,6 +22,12 @@ public class VoliGUI {
     private JPanel tableBackgroundPanel;
     private static final String DEFAULT_ERROR_TEXT = "Errore Prenotazione";
 
+    /**
+     * Costruttore della classe {@code VoliGUI}
+     *
+     * @param frameChiamante il frame chiamante
+     * @param controller     il controller
+     */
     VoliGUI(Frame frameChiamante, Controller controller) {
         UtilFunctionsForGUI.setupLayoutAndBackground(frame,voliPanel);
         prenotaButton.setBorder(new LineBorder(Color.black,3,false));

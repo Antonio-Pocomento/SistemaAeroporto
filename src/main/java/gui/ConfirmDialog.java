@@ -7,11 +7,21 @@ import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+/**
+ * La classe {@code ConfirmDialog}
+ */
 public class ConfirmDialog extends JDialog {
 
     private boolean confirmed = false;
     private static final String DEFAULT_FONT = "Times New Roman";
 
+    /**
+     * Costruttore di ConfirmDialog
+     *
+     * @param parent  frame genitore
+     * @param message messaggio
+     * @param title   titolo
+     */
     public ConfirmDialog(Frame parent, String message, String title) {
         super(parent, title, true);
 
@@ -83,6 +93,8 @@ public class ConfirmDialog extends JDialog {
 
     /**
      * Mostra il dialog e ritorna true se l'utente conferma.
+     *
+     * @return confirmed (valore booleano che indica la riuscita o no dell'operazione)
      */
     public boolean showDialog() {
         setVisible(true);

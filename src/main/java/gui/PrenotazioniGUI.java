@@ -11,6 +11,9 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * La classe {@code PrenotazioniGUI}
+ */
 public class PrenotazioniGUI {
     public final JFrame frame = new JFrame("Prenotazioni");
     private JPanel prenotazioniPanel;
@@ -29,6 +32,13 @@ public class PrenotazioniGUI {
     private static final String DEFAULT_CODEFIELD_TEXT = "Codice Volo Prenotato";
     private static final String DEFAULT_MODIFYERROR_TEXT = "Errore Modifica Prenotazione";
 
+
+    /**
+     * Costruttore della classe {@code PrenotazioniGUI}
+     *
+     * @param frameChiamante il frame chiamante
+     * @param controller     il controller
+     */
     public PrenotazioniGUI(JFrame frameChiamante, Controller controller) {
         UtilFunctionsForGUI.setupLayoutAndBackground(frame,prenotazioniPanel);
 

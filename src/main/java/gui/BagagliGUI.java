@@ -11,6 +11,9 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * la classe {@code BagagliGUI}
+ */
 public class BagagliGUI {
     public final JFrame frame = new JFrame("Bagagli");
     private JPanel bagagliPanel;
@@ -27,6 +30,12 @@ public class BagagliGUI {
     private JPanel fieldsPanel;
     private static final String DEFAULT_CODEFIELD_TEXT = "Codice Bagaglio";
 
+    /**
+     * Costruttore della classe {@code CercaVoloAdminGUI}
+     *
+     * @param frameChiamante il frame chiamante
+     * @param controller     il controller
+     */
     BagagliGUI(Frame frameChiamante, Controller controller) {
         UtilFunctionsForGUI.setupLayoutAndBackground(frame,bagagliPanel);
 

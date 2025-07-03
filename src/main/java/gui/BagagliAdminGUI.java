@@ -11,6 +11,10 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * la classe {@code BagagliAdminGUI} rappresenta la schermata di visualizzazione dei bagagli da parte dell'admin.
+ *
+ */
 public class BagagliAdminGUI {
     private JPanel bagagliAdminPanel;
     private JPanel contentPanel;
@@ -29,6 +33,12 @@ public class BagagliAdminGUI {
     public final JFrame frame = new JFrame("Bagagli Admin");
     private static final String DEFAULT_CODEFIELD_TEXT = "Codice Bagaglio";
 
+    /**
+     * Costruttore della classe {@code BagagliAdminGUI}
+     *
+     * @param frameChiamante il frame chiamante
+     * @param controller     il controller
+     */
     public BagagliAdminGUI(JFrame frameChiamante, Controller controller) {
         modifyPanel.setBackground(null);
 

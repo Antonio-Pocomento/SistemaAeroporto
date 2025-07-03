@@ -4,6 +4,9 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
+/**
+ * La classe {@code CustomLuggageCellRenderer} si occupa di evidenziare nella GUI i bagagli smarriti
+ */
 public class CustomLuggageCellRenderer extends DefaultTableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(

@@ -12,6 +12,9 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * La classe {@code RegisterGUI}
+ */
 public class RegisterGUI {
     public final JFrame frame = new JFrame("Registrazione");
     private JPanel registerPanel;
@@ -38,6 +41,12 @@ public class RegisterGUI {
     private static final String DEFAULT_EMAIL_TEXT = "Email";
     private static final String ERROR_TEXT = "Errore Registrazione";
 
+    /**
+     * Costruttore della classe {@code RegisterGUI}
+     *
+     * @param frameChiamante il frame chiamante
+     * @param controller     il controller
+     */
     public RegisterGUI(JFrame frameChiamante, Controller controller) {
         UtilFunctionsForGUI.setupLayoutAndBackground(frame,registerPanel);
 

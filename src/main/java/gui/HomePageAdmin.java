@@ -6,6 +6,10 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 
+/**
+ * La classe {@code HomePageAdmin}
+ *
+ */
 public class HomePageAdmin {
     public final JFrame frame = new JFrame("HomePage Admin");
     private JPanel homePageAdminPanel;
@@ -17,6 +21,12 @@ public class HomePageAdmin {
     private JLabel bagsIcon;
     private JLabel flightsIcon;
 
+    /**
+     * Costruttore della classe {@code HomePageAdmin}
+     *
+     * @param frameChiamante il frame chiamante
+     * @param controller     il controller
+     */
     public HomePageAdmin(JFrame frameChiamante, Controller controller) {
         UtilFunctionsForGUI.setupLayoutAndBackground(frame,homePageAdminPanel);
 
