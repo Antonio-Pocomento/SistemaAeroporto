@@ -80,7 +80,7 @@ public class RegisterGUI {
         UtilFunctionsForGUI.addHoverEffect(returnButton);
         UtilFunctionsForGUI.addPasswordVisibilityToggle(passwordField,passwordEyeIcon,DEFAULT_PASSWORDFIELD_TEXT);
         UtilFunctionsForGUI.addPasswordVisibilityToggle(confirmPasswordField,confirmPasswordEyeIcon,DEFAULT_CONFIRMPASSWORDFIELD_TEXT);
-
+        frame.setUndecorated(true);
         UtilFunctionsForGUI.setupFrame(frame);
         frame.addWindowListener(new WindowAdapter() {
             @Override
