@@ -15,9 +15,16 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.List;
 
+/**
+ * la classe {@code TableSetter} si occupa della creazione delle tabelle
+ */
 public class TableSetter {
 
     private static final String DEFAULT_FONT = "Times New Roman";
+
+    /**
+     * costruttore TableSetter
+     */
     TableSetter(){}
 
     private static void genericSetter(JTable table, JScrollPane scrollPane, JPanel backgroundPanel, DefaultTableModel model, int maxRows){
@@ -80,6 +87,15 @@ public class TableSetter {
         }
     }
 
+    /**
+     * imposta la tabella volo
+     *
+     * @param table           la tabella
+     * @param scrollPane      lo scroll pane
+     * @param backgroundPanel il background panel
+     * @param model           il model
+     * @param maxRows         il massimo di righe
+     */
     public static void setupFlightTable(JTable table, JScrollPane scrollPane, JPanel backgroundPanel, DefaultTableModel model, int maxRows) {
         genericSetter(table, scrollPane, backgroundPanel, model, maxRows);
         if(model != null)
@@ -92,6 +108,15 @@ public class TableSetter {
         }
     }
 
+    /**
+     * Imposta la tabella delle prenotazioni.
+     *
+     * @param table           la tabella
+     * @param scrollPane      lo scroll pane
+     * @param backgroundPanel il background panel
+     * @param model           il model
+     * @param maxRows         il massimo di righe
+     */
     public static void setupReservationsTable(JTable table, JScrollPane scrollPane, JPanel backgroundPanel, DefaultTableModel model, int maxRows) {
         genericSetter(table, scrollPane, backgroundPanel, model, maxRows);
         if(model != null)
@@ -104,6 +129,15 @@ public class TableSetter {
         }
     }
 
+    /**
+     * Imposta la tabella per i bagagli.
+     *
+     * @param table           la tabella
+     * @param scrollPane      lo scroll pane
+     * @param backgroundPanel il background panel
+     * @param model           il model
+     * @param maxRows         il massimo di righe
+     */
     public static void setupLuggageTable(JTable table, JScrollPane scrollPane, JPanel backgroundPanel, DefaultTableModel model, int maxRows) {
         genericSetter(table, scrollPane, backgroundPanel, model, maxRows);
         if(model != null)

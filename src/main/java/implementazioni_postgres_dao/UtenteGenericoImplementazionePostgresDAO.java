@@ -8,6 +8,9 @@ import javax.swing.table.DefaultTableModel;
 import java.sql.*;
 import java.util.*;
 
+/**
+ * La classe {@code UtenteGenericoImplementazionePostgresDAO}
+ */
 public class UtenteGenericoImplementazionePostgresDAO extends UserUtilFunctionsForDAO implements UtenteGenericoDAO {
 
     public void showFlights(DefaultTableModel flightsModel) throws SQLException {

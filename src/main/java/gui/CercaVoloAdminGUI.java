@@ -13,7 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * la classe {@code CercaVoloAdminGUI}
+ * la classe {@code CercaVoloAdminGUI} rappresenta la schermata di visualizzazione per cercare un volo da parte dell'admin.
  */
 public class CercaVoloAdminGUI {
     private JPanel cercaVoloPanel;
@@ -47,7 +47,7 @@ public class CercaVoloAdminGUI {
     private static final String DEFAULT_GATEFIELD_TEXT = "Numero Gate";
 
     /**
-     * Costruttore della classe {@code CercaVoloAdminGUI}
+     * Costruttore CercaVoloAdminGUI
      *
      * @param frameChiamante il frame chiamante
      * @param controller     il controller

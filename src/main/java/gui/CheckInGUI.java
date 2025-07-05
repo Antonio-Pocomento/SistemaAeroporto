@@ -18,7 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * La classe {@code CheckInGUI}
+ * La classe {@code CheckInGUI} rappresenta la schermata di visualizzazione per il checkin
  */
 public class CheckInGUI {
     public final JFrame frame = new JFrame("CheckIn");
@@ -44,7 +44,7 @@ public class CheckInGUI {
     private static final String USER_ICON_PATH = "src/main/images/userNameIcon.png";
 
     /**
-     * Costruttore della classe {@code CheckInGUI}
+     * Costruttore CheckInGUI
      *
      * @param frameChiamante il frame chiamante
      * @param controller     il controller

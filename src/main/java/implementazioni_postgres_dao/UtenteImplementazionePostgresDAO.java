@@ -8,6 +8,9 @@ import model.UtenteGenerico;
 
 import java.sql.*;
 
+/**
+ * La classe {@code UtenteImplementazionePostgresDAO}
+ */
 public class UtenteImplementazionePostgresDAO implements UtenteDAO {
 
     public boolean esisteUtente(String nomeUtente) throws SQLException {

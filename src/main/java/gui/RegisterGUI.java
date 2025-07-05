@@ -13,7 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * La classe {@code RegisterGUI}
+ * La classe {@code RegisterGUI} rappresenta la schermata di visualizzazione per registrarsi
  */
 public class RegisterGUI {
     public final JFrame frame = new JFrame("Registrazione");
@@ -42,7 +42,7 @@ public class RegisterGUI {
     private static final String ERROR_TEXT = "Errore Registrazione";
 
     /**
-     * Costruttore della classe {@code RegisterGUI}
+     * Costruttore RegisterGUI
      *
      * @param frameChiamante il frame chiamante
      * @param controller     il controller

@@ -12,7 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * La classe {@code PrenotazioniGUI}
+ * La classe {@code PrenotazioniGUI} rappresenta la schermata di visualizzazione per prenotare un volo
  */
 public class PrenotazioniGUI {
     public final JFrame frame = new JFrame("Prenotazioni");
@@ -34,7 +34,7 @@ public class PrenotazioniGUI {
 
 
     /**
-     * Costruttore della classe {@code PrenotazioniGUI}
+     * Costruttore PrenotazioniGUI
      *
      * @param frameChiamante il frame chiamante
      * @param controller     il controller

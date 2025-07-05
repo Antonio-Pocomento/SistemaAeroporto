@@ -7,7 +7,7 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 
 /**
- * La classe {@code HomePage}
+ * La classe {@code HomePage} rappresenta la schermata di visualizzazione dell' homepage dell'utente
  *
  */
 public class HomePage {
@@ -24,7 +24,7 @@ public class HomePage {
     private JLabel flightsIcon;
 
     /**
-     * Costruttore della classe {@code HomePage}
+     * Costruttore HomePage
      *
      * @param frameChiamante il frame chiamante
      * @param controller     il controller

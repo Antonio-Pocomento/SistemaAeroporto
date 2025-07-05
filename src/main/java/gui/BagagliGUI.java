@@ -12,7 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * la classe {@code BagagliGUI}
+ * la classe {@code BagagliGUI} rappresenta la schermata di visualizzazione dei bagagli da parte dell'utente
  */
 public class BagagliGUI {
     public final JFrame frame = new JFrame("Bagagli");
@@ -31,7 +31,7 @@ public class BagagliGUI {
     private static final String DEFAULT_CODEFIELD_TEXT = "Codice Bagaglio";
 
     /**
-     * Costruttore della classe {@code CercaVoloAdminGUI}
+     * Costruttore CercaVoloAdminGUI
      *
      * @param frameChiamante il frame chiamante
      * @param controller     il controller

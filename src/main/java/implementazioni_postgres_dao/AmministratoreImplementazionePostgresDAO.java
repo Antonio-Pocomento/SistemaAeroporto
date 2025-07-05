@@ -11,6 +11,9 @@ import javax.swing.table.DefaultTableModel;
 import java.sql.*;
 import java.util.List;
 
+/**
+ * La classe {@code AmministratoreImplementazionePostgresDAO} estende la classe UserUtilFunctionsForDAO e implementata dalla classe AmministratoreDAO
+ */
 public class AmministratoreImplementazionePostgresDAO extends UserUtilFunctionsForDAO implements AmministratoreDAO {
 
     public void aggiornaStatoBagaglio(String codice, String nuovoStato) throws SQLException{

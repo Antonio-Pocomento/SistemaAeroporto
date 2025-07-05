@@ -4,6 +4,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+/**
+ * La classe {@code ConnessioneDatabase} si occupa della conessione con il database
+ */
 public class ConnessioneDatabase {
 
     // ATTRIBUTI
@@ -28,6 +31,12 @@ public class ConnessioneDatabase {
     }
 
 
+    /**
+     * Getter instance.
+     *
+     * @return l'instanza
+     * @throws SQLException l'eccezzione sql
+     */
     public static ConnessioneDatabase getInstance() throws SQLException {
         if (instance == null || instance.connection.isClosed()) {
             instance = new ConnessioneDatabase();

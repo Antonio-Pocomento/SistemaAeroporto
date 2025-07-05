@@ -20,7 +20,7 @@ public class ImageLoader {
      * Carica le icone
      *
      * @param path path da cui prendere le icone
-     * @return icona
+     * @return     icona
      */
     public static ImageIcon loadIcon(String path) {
         BufferedImage img = loadImage(path);
@@ -34,7 +34,7 @@ public class ImageLoader {
      * Carica Immagine
      *
      * @param path path da cui prendere l'immagine
-     * @return immagine
+     * @return     immagine
      */
     public static BufferedImage loadImage(String path) {
         try {
@@ -45,7 +45,7 @@ public class ImageLoader {
     }
 
     /**
-     * Aggiungi background panel.
+     * Aggiunge background panel.
      *
      * @param panel panel
      */

@@ -12,7 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * La classe {@code VoliAdminGUI}
+ * La classe {@code VoliAdminGUI} rappresenta la schermata di visualizzazione per gestire i voli da parte dell'admin
  */
 public class VoliAdminGUI {
     public final JFrame frame = new JFrame("Voli Admin");
@@ -26,7 +26,7 @@ public class VoliAdminGUI {
     private JButton cercaVoloButton;
 
     /**
-     * Costruttore della classe {@code VoliAdminGUI}
+     * Costruttore VoliAdminGUI
      *
      * @param frameChiamante il frame chiamante
      * @param controller     il controller

@@ -9,7 +9,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
 /**
- * La classe {@code VoliGUI}
+ * La classe {@code VoliGUI} rappresenta la schermata di visualizzazione di tutti i voli disponibili da parte dell'utente
  */
 public class VoliGUI {
     public final JFrame frame = new JFrame("Voli");
@@ -23,7 +23,7 @@ public class VoliGUI {
     private static final String DEFAULT_ERROR_TEXT = "Errore Prenotazione";
 
     /**
-     * Costruttore della classe {@code VoliGUI}
+     * Costruttore VoliGUI
      *
      * @param frameChiamante il frame chiamante
      * @param controller     il controller

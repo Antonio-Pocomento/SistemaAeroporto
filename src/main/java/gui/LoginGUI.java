@@ -17,7 +17,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * La classe {@code LoginGUI}
+ * La classe {@code LoginGUI} rappresenta la schermata di visualizzazione per il login
  */
 public class LoginGUI {
     public final JFrame frame = new JFrame(LOGIN_TEXT);
@@ -49,7 +49,7 @@ public class LoginGUI {
     }
 
     /**
-     * Costruttore della classe {@code LoginGUI}
+     * Costruttore LoginGUI
      *
      * @param frameChiamante il frame chiamante
      * @param controller     il controller

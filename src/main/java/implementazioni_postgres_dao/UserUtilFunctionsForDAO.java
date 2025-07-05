@@ -16,7 +16,17 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * La classe {@code UserUtilFunctionsForDAO}
+ */
 public abstract class UserUtilFunctionsForDAO {
+    /**
+     * aggiunge righe volo.
+     *
+     * @param ps            il ps
+     * @param model         il model
+     * @throws SQLException l'eccezione sql
+     */
     protected void addFlightRows(PreparedStatement ps, DefaultTableModel model) throws SQLException {
         model.setRowCount(0);
         try (ResultSet rs = ps.executeQuery()) {
@@ -38,6 +48,17 @@ public abstract class UserUtilFunctionsForDAO {
         }
     }
 
+    /**
+     * Ricerca bagagli interni.
+     *
+     * @param model         il model
+     * @param query         la query
+     * @param initialParams il parametro iniziale
+     * @param codice        il codice
+     * @param tipo          il tipo
+     * @param stato         lo stato
+     * @throws SQLException l'eccezione sql
+     */
     protected void searchLuggageInternal(DefaultTableModel model, StringBuilder query, List<Object> initialParams, String codice, String tipo, String stato) throws SQLException {
         List<Object> parametri = new ArrayList<>(initialParams);
 
@@ -76,6 +97,24 @@ public abstract class UserUtilFunctionsForDAO {
         }
     }
 
+    /**
+     * Ricerca volo interno.
+     *
+     * @param model                 il model
+     * @param query                 la query
+     * @param initialParams         il parametro iniziale
+     * @param codice                il codice
+     * @param posti                 i posti
+     * @param compagnia             la compagnia
+     * @param aeroportoOrigine      l'aeroporto origine
+     * @param aeroportoDestinazione l'aeroporto destinazione
+     * @param data                  la data
+     * @param orario                l'orario
+     * @param ritardo               il ritardo
+     * @param stato                 lo stato
+     * @param numGate               il numero del gate
+     * @throws SQLException         l'eccezione sql
+     */
     protected void ricercaVoloInternal(DefaultTableModel model, StringBuilder query, List<Object> initialParams,
                                      String codice, String posti,
                                      String compagnia, String aeroportoOrigine, String aeroportoDestinazione,

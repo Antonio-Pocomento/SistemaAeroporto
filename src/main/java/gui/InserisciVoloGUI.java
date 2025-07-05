@@ -14,7 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * La classe {@code InserisciVoloGUI}
+ * La classe {@code InserisciVoloGUI} rappresenta la schermata di visualizzazione per inserire un nuovo volo
  */
 public class InserisciVoloGUI {
     private JPanel insertFlightPanel;
@@ -41,7 +41,7 @@ public class InserisciVoloGUI {
     private static final String DEFAULT_GATEFIELD_TEXT = "Numero Gate";
 
     /**
-     * Costruttore della classe {@code InserisciVoloGUI}
+     * Costruttore della InserisciVoloGUI
      *
      * @param frameChiamante il frame chiamante
      * @param controller     il controller

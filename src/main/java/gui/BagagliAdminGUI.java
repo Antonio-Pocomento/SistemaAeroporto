@@ -34,7 +34,7 @@ public class BagagliAdminGUI {
     private static final String DEFAULT_CODEFIELD_TEXT = "Codice Bagaglio";
 
     /**
-     * Costruttore della classe {@code BagagliAdminGUI}
+     * Costruttore BagagliAdminGUI
      *
      * @param frameChiamante il frame chiamante
      * @param controller     il controller

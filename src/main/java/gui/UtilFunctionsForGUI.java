@@ -7,15 +7,15 @@ import java.awt.event.*;
 import java.util.Arrays;
 
 /**
- * la classe {@code UtilFunctionsForGUI}
+ * la classe {@code UtilFunctionsForGUI} contiene metodi utili per il funzionamento dell'interfaccia
  */
 public class UtilFunctionsForGUI {
     private UtilFunctionsForGUI() {}
 
     /**
-     *  {@code addHoverEffect}
+     * aggiungi l'effetto hover
      *
-     * @param button il button
+     * @param button il bottone
      */
     public static void addHoverEffect(JButton button) {
         button.addMouseListener(new MouseAdapter() {
@@ -34,7 +34,7 @@ public class UtilFunctionsForGUI {
     }
 
     /**
-     *  {@code setupFrame}
+     * setupFrame
      *
      * @param frame il frame
      */
@@ -48,12 +48,23 @@ public class UtilFunctionsForGUI {
         frame.setExtendedState(Frame.MAXIMIZED_BOTH);
     }
 
+    /**
+     * Imposta layout e sfondo.
+     *
+     * @param frame        il frame
+     * @param contentPanel il pannello dei contenuti
+     */
     public static void setupLayoutAndBackground(JFrame frame, JPanel contentPanel) {
         frame.setContentPane(contentPanel);
         contentPanel.setLayout(new OverlayLayout(contentPanel));
         ImageLoader.addBackgroundPanel(contentPanel);
     }
 
+    /**
+     * Non consentire spazi.
+     *
+     * @param textComponent la componente testuale
+     */
     public static void disallowSpaces(JTextComponent textComponent) {
         textComponent.addKeyListener(new KeyAdapter() {
             @Override
@@ -65,6 +76,13 @@ public class UtilFunctionsForGUI {
         });
     }
 
+    /**
+     * Aggiunge un interruttore per la visibilità della password.
+     *
+     * @param passwordField       il campo password
+     * @param passwordEyeIcon     l'icona dell'occhio per la password
+     * @param defaultPasswordText il testo di default per password
+     */
     public static void addPasswordVisibilityToggle(JPasswordField passwordField, JLabel passwordEyeIcon, String defaultPasswordText) {
         passwordEyeIcon.addMouseListener(new MouseAdapter() {
             @Override
@@ -85,6 +103,12 @@ public class UtilFunctionsForGUI {
         });
     }
 
+    /**
+     * Aggiunge segnaposto al campo di testo.
+     *
+     * @param textField       il campo di testo
+     * @param placeholderText il testo del segnaposto
+     */
     public static void addTextFieldPlaceholder(JTextField textField, String placeholderText) {
         textField.setForeground(Color.gray);
         textField.setText(placeholderText);
@@ -108,6 +132,12 @@ public class UtilFunctionsForGUI {
         });
     }
 
+    /**
+     * Aggiunge segnaposto per il campo password.
+     *
+     * @param passwordField   il campo password
+     * @param placeholderText il testo per il segnaposto
+     */
     public static void addPasswordFieldPlaceholder(JPasswordField passwordField, String placeholderText) {
         passwordField.setForeground(Color.gray);
         passwordField.setText(placeholderText);
