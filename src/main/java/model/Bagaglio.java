@@ -18,7 +18,7 @@ public class Bagaglio {
      */
     public Bagaglio(int codice, Passeggero passeggero, String tipo) {
         this.codice = codice;
-        this.stato = StatoBagaglio.CARICATO;
+        this.stato = StatoBagaglio.REGISTRATO;
         this.tipo = tipo;
         this.passeggero = passeggero;
     }

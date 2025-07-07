@@ -8,6 +8,10 @@ import java.util.stream.Collectors;
  */
 public enum StatoBagaglio {
     /**
+     * Il bagaglio è stato registrato.
+     */
+    REGISTRATO,
+    /**
      * Il bagaglio è caricato.
      */
     CARICATO,
