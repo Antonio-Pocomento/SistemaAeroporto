@@ -34,7 +34,7 @@ public class Controller {
     private final UtenteGenericoDAO utenteGenericoDAO = new UtenteGenericoImplementazionePostgresDAO();
     private String codiceVoloDaPrenotare;
     private static final Random random = new Random();
-    private static final char[] sedili = {'A', 'B', 'C', 'D', 'E', 'F'};
+    private static final char[] sedili = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K'};
     private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy";
 
     /**
@@ -531,7 +531,7 @@ public class Controller {
      * @return la stringa
      */
     public static String generaPosto() {
-        int fila = random.nextInt(30) + 1; // file da 1 a 30
+        int fila = random.nextInt(99) + 1; // file da 1 a 30
         char sedile = sedili[random.nextInt(sedili.length)];
         return String.format("%d%c", fila, sedile);
     }

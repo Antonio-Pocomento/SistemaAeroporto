@@ -67,7 +67,7 @@ public abstract class UserUtilFunctionsForDAO {
             parametri.add(Integer.parseInt(codice.replace("BAG-", ""), 36));
         }
         if (!tipo.isBlank()) {
-            query.append(" AND B.tipo = ?");
+            query.append(" AND B.tipo = ?::tipo_bagaglio");
             parametri.add(tipo);
         }
         if (!stato.isBlank()) {
