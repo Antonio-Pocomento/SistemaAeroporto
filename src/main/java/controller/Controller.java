@@ -38,7 +38,7 @@ public class Controller {
     private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy";
 
     /**
-     * i nomi delle colonne dei voli
+     * I nomi delle colonne dei voli
      */
     String[] flightColumnNames = {
             "Codice", "Posti Disponibili", "Comp. Aerea", "Origine",
@@ -71,7 +71,7 @@ public class Controller {
             "Stato"
     };
     /**
-     * Il model della tabella delle pronotazioni
+     * Il model della tabella delle prenotazioni
      */
     DefaultTableModel bookingTableModel = new DefaultTableModel(bookingColumnNames, 0) {
         @Override
@@ -290,7 +290,7 @@ public class Controller {
      * @param nome          il nome
      * @param secNome       il secondo nome
      * @param cognome       il cognome
-     * @param cf            il codicefiscale
+     * @param cf            il codice fiscale
      * @param table         la tabella
      * @throws SQLException l'eccezione sql
      */

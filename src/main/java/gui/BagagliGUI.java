@@ -12,7 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * la classe {@code BagagliGUI} rappresenta la schermata di visualizzazione dei bagagli da parte dell'utente
+ * La classe {@code BagagliGUI} rappresenta la schermata di visualizzazione dei bagagli da parte dell'utente
  */
 public class BagagliGUI {
     public final JFrame frame = new JFrame("Bagagli");

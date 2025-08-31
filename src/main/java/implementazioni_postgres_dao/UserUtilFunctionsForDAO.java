@@ -21,7 +21,7 @@ import java.util.List;
  */
 public abstract class UserUtilFunctionsForDAO {
     /**
-     * aggiunge righe volo.
+     * Aggiunge righe volo.
      *
      * @param ps            il ps
      * @param model         il model

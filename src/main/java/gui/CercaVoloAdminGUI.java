@@ -13,7 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * la classe {@code CercaVoloAdminGUI} rappresenta la schermata di visualizzazione per cercare un volo da parte dell'admin.
+ * La classe {@code CercaVoloAdminGUI} rappresenta la schermata di visualizzazione per cercare un volo da parte dell'admin.
  */
 public class CercaVoloAdminGUI {
     private JPanel cercaVoloPanel;

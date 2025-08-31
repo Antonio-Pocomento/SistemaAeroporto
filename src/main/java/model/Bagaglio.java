@@ -31,7 +31,7 @@ public class Bagaglio {
     public StatoBagaglio getStato(){return stato;}
 
     /**
-     * Getter codice .
+     * Getter codice.
      *
      * @return il codice del bagaglio
      */

@@ -12,7 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * la classe {@code BagagliAdminGUI} rappresenta la schermata di visualizzazione dei bagagli da parte dell'admin.
+ * La classe {@code BagagliAdminGUI} rappresenta la schermata di visualizzazione dei bagagli da parte dell'admin.
  *
  */
 public class BagagliAdminGUI {

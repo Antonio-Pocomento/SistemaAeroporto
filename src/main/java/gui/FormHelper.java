@@ -21,7 +21,7 @@ public class FormHelper {
     FormHelper() {}
 
     /**
-     * Associa i bottoni ai textField corrispondenti  .
+     * Associa i bottoni ai textField corrispondenti.
      *
      * @param button         bottone
      * @param fieldDefaults  field defaults

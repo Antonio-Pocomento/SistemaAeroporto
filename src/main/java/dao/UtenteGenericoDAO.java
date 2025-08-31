@@ -31,7 +31,7 @@ public interface UtenteGenericoDAO {
      * @param data                  la data
      * @param orario                l'orario
      * @param ritardo               il ritardo
-     * @param stato                 lostato
+     * @param stato                 lo stato
      * @param numGate               il numero del gate
      * @throws SQLException         l'eccezione sql
      */

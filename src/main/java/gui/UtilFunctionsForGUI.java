@@ -7,13 +7,13 @@ import java.awt.event.*;
 import java.util.Arrays;
 
 /**
- * la classe {@code UtilFunctionsForGUI} contiene metodi utili per il funzionamento dell'interfaccia
+ * La classe {@code UtilFunctionsForGUI} contiene metodi utili per il funzionamento dell'interfaccia
  */
 public class UtilFunctionsForGUI {
     private UtilFunctionsForGUI() {}
 
     /**
-     * aggiungi l'effetto hover
+     * Aggiungi l'effetto hover
      *
      * @param button il bottone
      */

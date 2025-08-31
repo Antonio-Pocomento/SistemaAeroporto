@@ -16,14 +16,14 @@ import java.util.Map;
 import java.util.List;
 
 /**
- * la classe {@code TableSetter} si occupa della creazione delle tabelle
+ * La classe {@code TableSetter} si occupa della creazione delle tabelle
  */
 public class TableSetter {
 
     private static final String DEFAULT_FONT = "Times New Roman";
 
     /**
-     * costruttore TableSetter
+     * Costruttore TableSetter
      */
     TableSetter(){}
 

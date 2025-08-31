@@ -1,7 +1,7 @@
 package custom_exceptions;
 
 /**
- *  La classe {@code UserNotFoundException} si occupa di gestire l'eccezione per utente non trovatp
+ *  La classe {@code UserNotFoundException} si occupa di gestire l'eccezione per utente non trovato
  */
 public class UserNotFoundException extends RuntimeException {
     /**
