@@ -5,7 +5,7 @@
 -- Dumped from database version 17.4
 -- Dumped by pg_dump version 17.4
 
--- Started on 2025-08-31 16:34:56
+-- Started on 2025-09-09 14:43:36
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -575,6 +575,7 @@ ALTER TABLE ONLY public.prenotazione ALTER COLUMN numero_biglietto SET DEFAULT n
 -- Data for Name: bagaglio; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
+INSERT INTO public.bagaglio VALUES ('REGISTRATO', 'Valigia', 'RSSMRC80A01H501Z', 67, 'IA452');
 
 
 --
@@ -583,6 +584,7 @@ ALTER TABLE ONLY public.prenotazione ALTER COLUMN numero_biglietto SET DEFAULT n
 -- Data for Name: passeggero; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
+INSERT INTO public.passeggero VALUES ('RSSMRC80A01H501Z', 'Marco', NULL, 'Rossi');
 
 
 --
@@ -591,6 +593,7 @@ ALTER TABLE ONLY public.prenotazione ALTER COLUMN numero_biglietto SET DEFAULT n
 -- Data for Name: prenotazione; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
+INSERT INTO public.prenotazione VALUES (80, '12A', 'IN_ATTESA', 'IA452', 'MarcoRossi', 'RSSMRC80A01H501Z');
 
 
 --
@@ -600,6 +603,7 @@ ALTER TABLE ONLY public.prenotazione ALTER COLUMN numero_biglietto SET DEFAULT n
 --
 
 INSERT INTO public.utente VALUES ('admin', 'admin123', 'admin@adm.com', 'amministratore');
+INSERT INTO public.utente VALUES ('MarcoRossi', 'MarcoRossi!2025', 'marco.rossi@gmail.com', 'generico');
 
 
 --
@@ -608,6 +612,7 @@ INSERT INTO public.utente VALUES ('admin', 'admin123', 'admin@adm.com', 'amminis
 -- Data for Name: volo; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
+INSERT INTO public.volo VALUES ('IA452', 180, 179, 'ItalAir', 'Napoli', 'Milano', '2025-09-10', '14:20:00', NULL, 'PROGRAMMATO', 1, 'admin');
 
 
 --
@@ -616,7 +621,7 @@ INSERT INTO public.utente VALUES ('admin', 'admin123', 'admin@adm.com', 'amminis
 -- Name: bagaglio_codice_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.bagaglio_codice_seq', 66, true);
+SELECT pg_catalog.setval('public.bagaglio_codice_seq', 67, true);
 
 
 --
@@ -625,7 +630,7 @@ SELECT pg_catalog.setval('public.bagaglio_codice_seq', 66, true);
 -- Name: prenotazione_numerobiglietto_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.prenotazione_numerobiglietto_seq', 79, true);
+SELECT pg_catalog.setval('public.prenotazione_numerobiglietto_seq', 80, true);
 
 
 --
@@ -816,7 +821,7 @@ ALTER TABLE ONLY public.prenotazione
     ADD CONSTRAINT fk_volo FOREIGN KEY (codice_volo) REFERENCES public.volo(codice) ON DELETE CASCADE;
 
 
--- Completed on 2025-08-31 16:34:56
+-- Completed on 2025-09-09 14:43:36
 
 --
 -- PostgreSQL database dump complete
